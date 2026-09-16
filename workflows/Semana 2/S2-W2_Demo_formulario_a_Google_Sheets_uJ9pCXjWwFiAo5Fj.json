@@ -1,0 +1,336 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "▶ PASO 1 — Simular respuesta del formulario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📝 PASO 2 — Datos del formulario",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📋 PASO 3 — Preparar fila para Sheets": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📊 PASO 4 — Guardar en Google Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📝 PASO 2 — Datos del formulario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📋 PASO 3 — Preparar fila para Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-12T02:56:10.126Z",
+  "description": null,
+  "id": "uJ9pCXjWwFiAo5Fj",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S2-W2 | Demo: formulario a Google Sheets",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "60af2fbd-0223-4749-ba9c-1f54bace0a0e",
+      "name": "▶ PASO 1 — Simular respuesta del formulario",
+      "parameters": {},
+      "position": [
+        -256,
+        272
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "61b581eb-5831-429e-8f1a-c3887184765e",
+      "name": "📝 PASO 2 — Datos del formulario",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "387ae887-874b-4439-8d9d-97d8981fcf30",
+              "name": "Nombre",
+              "type": "string",
+              "value": "Alejandro Muñoz"
+            },
+            {
+              "id": "2e41f0a6-3567-4338-82f5-ed6c92d68728",
+              "name": "Correo",
+              "type": "string",
+              "value": "alejandrozevallos.218@gmail.com"
+            },
+            {
+              "id": "21799f62-2522-40e6-8992-68f69bfa5bdd",
+              "name": "Empresa",
+              "type": "string",
+              "value": "Comercial Andina"
+            },
+            {
+              "id": "b52b1389-286a-4302-b1f4-f708b5656c2a",
+              "name": "Pedido",
+              "type": "string",
+              "value": "Registrar factura FAC-1046"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        0,
+        272
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "8b687040-a551-474e-8f64-3be3b6a189e9",
+      "name": "📋 PASO 3 — Preparar fila para Sheets",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c079171d-1ee8-4ad4-b102-eb312a13cf65",
+              "name": "nombre",
+              "type": "string",
+              "value": "={{ $json.Nombre }}"
+            },
+            {
+              "id": "aababaab-b4e2-46d6-a25f-98ca437446e4",
+              "name": "correo",
+              "type": "string",
+              "value": "={{ $json.Correo }}"
+            },
+            {
+              "id": "4490106b-113a-403c-9a2b-c73eea1ff1f6",
+              "name": "empresa",
+              "type": "string",
+              "value": "={{ $json.Empresa }}"
+            },
+            {
+              "id": "e35ff1ce-81a5-45d3-95c0-ae08047de17d",
+              "name": "pedido",
+              "type": "string",
+              "value": "={{ $json.Pedido }}"
+            },
+            {
+              "id": "3f330c8e-9aca-41c5-ae08-3bcac6f47978",
+              "name": "estado",
+              "type": "string",
+              "value": "Registrado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        272,
+        272
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
+        }
+      },
+      "id": "af684729-925f-4a35-8d41-ac4100b757e6",
+      "name": "📊 PASO 4 — Guardar en Google Sheets",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "nombre",
+              "id": "nombre",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "correo",
+              "id": "correo",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "empresa",
+              "id": "empresa",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "pedido",
+              "id": "pedido",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "estado",
+              "id": "estado",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "correo": "={{ $json.correo }}",
+            "empresa": "={{ $json.empresa }}",
+            "estado": "={{ $json.estado }}",
+            "nombre": "={{ $json.nombre }}",
+            "pedido": "={{ $json.pedido }}"
+          }
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1cCj-TGwHkQwTiXUwK-UtJDNtYdyqlLglAmoqIo3YwsQ"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Hoja 1"
+        }
+      },
+      "position": [
+        528,
+        272
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5
+    },
+    {
+      "id": "7476b995-949a-4afc-8787-a732d94edb6a",
+      "name": "🟠 CONFIGURA W2",
+      "parameters": {
+        "color": 3,
+        "content": "## 🟠 Configura\n\n1. Crea un Google Sheet con columnas: nombre, correo, empresa, pedido, estado.\n2. Copia el ID de la URL (.../d/**ID**/edit).\n3. Pégalo en el nodo **Guardar en Google Sheets**.\n4. Conecta tu credencial de Google.\n\nSi aún no tienes credencial, ejecuta solo hasta el paso 3: igual ves los datos ordenados.",
+        "height": 280,
+        "width": 400
+      },
+      "position": [
+        -320,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "efc7e227-826c-48bc-a8e5-4e29990a3abc",
+      "name": "🟢 EJECUTA W2",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Ejecuta\n\nEste es el flujo **antes** del taller: el alumno verá Formulario → fila en Sheets.\n\nLuego ellos arman el suyo con su propio formulario.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "222ec9f9-186c-458f-b613-da95e299a337",
+      "name": "🔵 CONCEPTO W2",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Qué debes ver\n\nEl trigger de clase es el botón. En producción, el trigger sería **una fila nueva** cuando alguien responde el formulario.\n\nMira los **logs**: cada nodo debe quedar en verde.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        288,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "2a17b4f8-f8a6-413c-b683-8500d6359656",
+      "name": "🟡 RETO W2",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nCambia el nombre y el pedido en el paso 2 y vuelve a ejecutar. Debe aparecer una fila nueva.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        608,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-12T02:56:10.129Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-12T02:56:10.129Z",
+      "workflowId": "uJ9pCXjWwFiAo5Fj"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-12T15:27:03.414Z",
+  "versionCounter": 11,
+  "versionId": "2ff44c3b-4ec4-47f8-8194-11a0acceecae"
+}

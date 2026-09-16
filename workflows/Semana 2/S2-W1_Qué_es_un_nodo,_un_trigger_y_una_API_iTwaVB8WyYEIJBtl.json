@@ -1,0 +1,200 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "▶ PASO 1 — Iniciar demo": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📡 PASO 2 — Pedir datos a una API",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📡 PASO 2 — Pedir datos a una API": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📋 PASO 3 — Ordenar nombre y correo",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-12T02:30:23.940Z",
+  "description": null,
+  "id": "iTwaVB8WyYEIJBtl",
+  "isArchived": true,
+  "meta": null,
+  "name": "S2-W1 | Qué es un nodo, un trigger y una API",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "724e810b-6cb5-40d6-a3c2-482cb8334a46",
+      "name": "▶ PASO 1 — Iniciar demo",
+      "parameters": {},
+      "position": [
+        16,
+        320
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "6b007e5f-0eab-4cb6-9735-03e5a061400f",
+      "name": "📡 PASO 2 — Pedir datos a una API",
+      "parameters": {
+        "options": {},
+        "url": "https://pokeapi.co/api/v2/pokemon/ditto"
+      },
+      "position": [
+        272,
+        320
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "2d7eaf9f-a656-446d-b14c-0fef138aadba",
+      "name": "📋 PASO 3 — Ordenar nombre y correo",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "016aace2-edfb-4794-965d-845fef4c0217",
+              "name": "nombre",
+              "type": "string",
+              "value": "={{ $json.name }}"
+            },
+            {
+              "id": "6ebfcb4f-1706-4ab4-9261-aeb9c45718fc",
+              "name": "correo",
+              "type": "string",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "id": "a91f555e-51d4-43e1-82b9-af39cd10c80a",
+              "name": "empresa",
+              "type": "string",
+              "value": "={{ $json.company.name }}"
+            },
+            {
+              "id": "71488566-10b5-407d-a67b-206e3165521e",
+              "name": "mensaje",
+              "type": "string",
+              "value": "=Hola {{ $json.name }}. Empresa: {{ $json.company.name }}. Correo: {{ $json.email }}."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        544,
+        320
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "18f4af8a-74c0-44d9-83a1-7e4788680db6",
+      "name": "🟠 CONFIGURA W1",
+      "parameters": {
+        "color": 3,
+        "content": "## 🟠 Configura\n\nNo pide credenciales. El trigger es el botón **Test workflow**.\n\nLa API de este ejemplo es pública (datos de mentira para clase).",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        -304,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "0f758858-153b-4a5d-a317-49f21b8e4282",
+      "name": "🟢 EJECUTA W1",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Ejecuta\n\n1. Pulsa Test workflow.\n2. Abre cada nodo y mira el resultado a la derecha.\n3. En el paso 3 verás nombre, correo y empresa ya ordenados.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "e67a6e9b-69b8-4f88-afa9-725a3f2edf03",
+      "name": "🔵 CONCEPTO W1",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Qué debes ver\n\n- **Trigger:** arranca el workflow.\n- **API:** n8n pide datos a otro sistema.\n- **Nodo:** cada caja hace una tarea y pasa el resultado al siguiente.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        288,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "c94de1e1-a299-402a-8354-29e7b21f9de5",
+      "name": "🟡 RETO W1",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nCambia el número final de la URL (`users/1` por `users/2`) y vuelve a ejecutar. ¿Qué cambió?",
+        "height": 200,
+        "width": 340
+      },
+      "position": [
+        544,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-12T02:30:23.941Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-12T02:30:23.941Z",
+      "workflowId": "iTwaVB8WyYEIJBtl"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-12T02:36:06.000Z",
+  "versionCounter": 17,
+  "versionId": "5d8b42a5-9f20-4a26-8ce9-1201c81b1d24"
+}

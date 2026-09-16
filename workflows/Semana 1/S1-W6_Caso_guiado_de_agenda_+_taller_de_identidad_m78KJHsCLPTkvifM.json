@@ -1,0 +1,548 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "A — Gemini con estructura": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "A3 ✅ Prompt estructurado",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "A — Gemini sin estructura": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "A3 ❌ Prompt deficiente",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "A1 ▶ Iniciar caso guiado": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "A2 📝 Solicitud desordenada",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "A2 📝 Solicitud desordenada": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "A3 ❌ Prompt deficiente",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "A3 ✅ Prompt estructurado",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "A3 ✅ Prompt estructurado": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "A4 🔀 Esperar ambas agendas",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "A3 ❌ Prompt deficiente": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "A4 🔀 Esperar ambas agendas",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "A4 🔀 Esperar ambas agendas": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "A5 🔍 Comparar agendas",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "B — Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "B3 ✍️ Completar System Prompt",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "B2 📝 Solicitud de prueba": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "B3 ✍️ Completar System Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "B3 ✍️ Completar System Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "B4 ✅ Revisar con rúbrica",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T05:08:52.240Z",
+  "description": null,
+  "id": "m78KJHsCLPTkvifM",
+  "isArchived": false,
+  "meta": null,
+  "name": "S1-W6 | Caso guiado de agenda + taller de identidad",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "98ef0090-903b-4114-b58f-0e192c82dde7",
+      "name": "A1 ▶ Iniciar caso guiado",
+      "parameters": {},
+      "position": [
+        -304,
+        352
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "792b12af-823b-469b-8f05-fb26121dbe40",
+      "name": "A2 📝 Solicitud desordenada",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "51c969ec-e0cc-57ab-a624-2dc82cea68df",
+              "name": "solicitud_agenda",
+              "type": "string",
+              "value": "Mañana debo revisar el informe (45 min), tener una reunión con Ventas a las 10:00 (1 h), responder correos (30 min), preparar una propuesta (2 h) y llamar a Ana después del almuerzo (20 min)."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -64,
+        352
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "aee0cd1a-d6ec-4500-8667-15e669af4b11",
+      "name": "A3 ❌ Prompt deficiente",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Organiza mi agenda."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $json.solicitud_agenda }}"
+      },
+      "position": [
+        208,
+        192
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "65b659b3-51d4-4673-ab3a-a7478d9a5a2b",
+      "name": "A — Gemini sin estructura",
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {
+          "maxOutputTokens": 1000,
+          "temperature": 0.2
+        }
+      },
+      "position": [
+        240,
+        384
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "20556ae1-9396-4784-b841-69bd949231d0",
+      "name": "A3 ✅ Prompt estructurado",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "ROL: Eres un asistente corporativo de organización de agenda.\nOBJETIVO: Convertir solicitudes desordenadas en una agenda diaria viable.\nCONTEXTO: Jornada laboral de 9:00 a 18:00. Almuerzo de 13:00 a 14:00. No puedes consultar ni modificar un calendario real.\nREGLAS:\n1. Conserva todas las actividades y duraciones informadas.\n2. No inventes reuniones, asistentes, enlaces ni disponibilidad.\n3. Si existe un conflicto o falta un horario, decláralo como supuesto pendiente de confirmar.\n4. Incluye pausas breves cuando haya bloques consecutivos extensos.\n5. No afirmes que la agenda fue creada en un calendario.\nFORMATO DE SALIDA:\n- Tabla con Hora, Actividad, Duración y Estado.\n- Después, lista breve de conflictos o datos por confirmar.\nTONO: Claro, ejecutivo y conciso."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $('A2 📝 Solicitud desordenada').first().json.solicitud_agenda }}"
+      },
+      "position": [
+        208,
+        512
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "5c0176a7-ba9a-403c-989b-096c9a2b08f3",
+      "name": "A — Gemini con estructura",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 1000,
+          "temperature": 0.2
+        }
+      },
+      "position": [
+        208,
+        704
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "55b890b8-1192-4d83-9ebb-0b4814a0ce35",
+      "name": "A4 🔀 Esperar ambas agendas",
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "position": [
+        496,
+        352
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "d21f7c41-bd31-45ef-ac8a-7312ffbd568d",
+      "name": "A5 🔍 Comparar agendas",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6861ce6c-a0e7-5ea3-a08e-da56951c0ee2",
+              "name": "solicitud",
+              "type": "string",
+              "value": "={{ $('A2 📝 Solicitud desordenada').first().json.solicitud_agenda }}"
+            },
+            {
+              "id": "69b900c2-955d-5a29-a728-5bc218c722d8",
+              "name": "agenda_prompt_deficiente",
+              "type": "string",
+              "value": "={{ $('A3 ❌ Prompt deficiente').first().json.text ?? $('A3 ❌ Prompt deficiente').first().json.output }}"
+            },
+            {
+              "id": "8b397a14-a93e-5ffa-8079-8138d9fbf2a2",
+              "name": "agenda_prompt_estructurado",
+              "type": "string",
+              "value": "={{ $('A3 ✅ Prompt estructurado').first().json.text ?? $('A3 ✅ Prompt estructurado').first().json.output }}"
+            },
+            {
+              "id": "aa5bdde6-e5d4-56bd-8e13-06ee70ffb84f",
+              "name": "criterios",
+              "type": "string",
+              "value": "Completitud, supuestos visibles, conflictos, formato y límites."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        752,
+        352
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "52186a88-8565-487e-bc36-acda9a71c10d",
+      "name": "A 🟢 CASO GUIADO",
+      "parameters": {
+        "color": 5,
+        "content": "## A — Caso práctico guiado (15 min)\n\n1. Ejecuta ambas ramas.\n2. Subraya problemas del prompt deficiente.\n3. Identifica rol, objetivo, contexto, reglas, restricciones y formato en el prompt estructurado.\n4. Modifica una regla y vuelve a probar.",
+        "height": 270,
+        "width": 430
+      },
+      "position": [
+        -336,
+        32
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "cb656799-7aeb-4046-ae7f-3e6edab9e4cf",
+      "name": "A 🔵 CONTROL",
+      "parameters": {
+        "color": 4,
+        "content": "## A — Comparación justa\n\nLas dos ramas usan el mismo modelo, temperatura y solicitud. El **Merge** sincroniza ambas salidas. La variable que cambia es la calidad del System Prompt.",
+        "height": 230,
+        "width": 390
+      },
+      "position": [
+        512,
+        624
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "3cb0b6dd-b946-4874-addc-1ec17e8402c2",
+      "name": "A 🔴 LÍMITE",
+      "parameters": {
+        "color": 2,
+        "content": "## A — Atención\n\nEl resultado es una propuesta de agenda. No se consultó disponibilidad ni se creó ningún evento real.",
+        "height": 180,
+        "width": 300
+      },
+      "position": [
+        944,
+        624
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "bf3aacc6-850b-4dfc-8e7c-b09d7d6a62e5",
+      "name": "B2 📝 Solicitud de prueba",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9aed7ad-fa0f-5ec4-b7da-179783b2f964",
+              "name": "solicitud_usuario",
+              "type": "string",
+              "value": "Necesito responder a un cliente molesto por un retraso y proponer el siguiente paso sin prometer una fecha que todavía no está confirmada."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -64,
+        1312
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "b673f0a7-f63d-41be-96fe-198cac95f1e7",
+      "name": "B3 ✍️ Completar System Prompt",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "ROL: [COMPLETAR: quién es el asistente]\nOBJETIVO: [COMPLETAR: qué resultado produce]\nUSUARIO OBJETIVO: [COMPLETAR]\nCONTEXTO AUTORIZADO: [COMPLETAR con datos ficticios del caso]\nPERSONALIDAD Y TONO: [COMPLETAR]\nREGLAS: [COMPLETAR al menos 3]\nRESTRICCIONES Y ESCALAMIENTO: [COMPLETAR al menos 2]\nHERRAMIENTAS PERMITIDAS: Ninguna en esta práctica; no afirmar que se ejecutaron acciones.\nFORMATO DE SALIDA: [COMPLETAR]\n\nResponde a la solicitud del usuario aplicando únicamente lo que esté definido. Si un bloque sigue incompleto, indícalo antes de responder."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $json.solicitud_usuario }}"
+      },
+      "position": [
+        240,
+        1312
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "e2fd5c50-d711-4429-be01-055220c30cc0",
+      "name": "B — Gemini 2.5 Flash",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 650,
+          "temperature": 0.3
+        }
+      },
+      "position": [
+        240,
+        1536
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "ced281dc-42fa-4309-8b23-eebc1ecce0b7",
+      "name": "B4 ✅ Revisar con rúbrica",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e337d54c-8059-5c1b-8ff0-dd3f37cb070c",
+              "name": "respuesta",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text }}"
+            },
+            {
+              "id": "0433c321-5a46-5742-b3c3-30d6e1720563",
+              "name": "rubrica",
+              "type": "string",
+              "value": "Rol claro | objetivo verificable | contexto suficiente | tono | reglas | límites | formato"
+            },
+            {
+              "id": "22c7fb13-9c3b-5150-b3d6-42ef3bdfcc70",
+              "name": "autoevaluacion",
+              "type": "string",
+              "value": "Puntúa cada criterio de 0 a 2 y mejora el criterio más débil."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        512,
+        1312
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "e0b6536c-6d2a-47e2-bb34-84a80fd6add2",
+      "name": "B 🟠 EDITA AQUÍ",
+      "parameters": {
+        "color": 3,
+        "content": "## B — Taller autónomo (20 min)\n\nAbre **B3** y reemplaza todos los bloques `[COMPLETAR]`. Elige un asistente corporativo distinto al organizador de agenda. Usa solo datos ficticios.",
+        "height": 230,
+        "width": 420
+      },
+      "position": [
+        -336,
+        1584
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "74be877a-6c7b-4219-ac8a-f43d8554c361",
+      "name": "B 🟢 SECUENCIA",
+      "parameters": {
+        "color": 5,
+        "content": "## B — Secuencia del estudiante\n\n1. Define la identidad.\n2. Añade contexto autorizado.\n3. Escribe reglas y límites.\n4. Define el formato.\n5. Ejecuta dos casos normales y un caso límite.\n6. Itera una vez.",
+        "height": 260,
+        "width": 410
+      },
+      "position": [
+        -96,
+        1024
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "09774715-97b1-4d05-b7b6-95a80c610544",
+      "name": "B 🔵 RÚBRICA",
+      "parameters": {
+        "color": 4,
+        "content": "## B — Feedback entre pares\n\n0 = ausente · 1 = parcial · 2 = claro\n\nEvalúa: rol, objetivo, contexto, tono, reglas, restricciones/escalamiento y formato. Máximo: 14 puntos.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        528,
+        1584
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "0bbe9964-9b79-4baf-97b9-25d601b1e94a",
+      "name": "B 🟡 SALIDA",
+      "parameters": {
+        "content": "## B — Evidencia de aprendizaje\n\nEntrega: System Prompt final + 3 entradas de prueba + salidas + una mejora realizada después del feedback.",
+        "height": 210,
+        "width": 350
+      },
+      "position": [
+        752,
+        1056
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T05:08:52.246Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T05:08:52.246Z",
+      "workflowId": "m78KJHsCLPTkvifM"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-05T16:40:07.850Z",
+  "versionCounter": 14,
+  "versionId": "8c90c967-9ce3-49c1-8a5c-dceb0ccde743"
+}

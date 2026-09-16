@@ -1,0 +1,283 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "▶ PASO 1 — Iniciar caso ODONTOVIDA": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📝 PASO 2 — Consulta del paciente",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📝 PASO 2 — Consulta del paciente": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Generar respuesta",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🤖 PASO 3 — Generar respuesta": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📤 PASO 4 — Revisar respuesta",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🧠 Modelo — Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Generar respuesta",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T05:07:46.040Z",
+  "description": null,
+  "id": "ZxVYtsWuL7c9zMz6",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S1-W4 | Asistente de atención ODONTOVIDA",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "ae31dc7d-656c-480f-8c89-ceca80db5f14",
+      "name": "▶ PASO 1 — Iniciar caso ODONTOVIDA",
+      "parameters": {},
+      "position": [
+        -176,
+        288
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "a9f95e52-1a6f-48ff-8a68-8fe0dcc43071",
+      "name": "📝 PASO 2 — Consulta del paciente",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f7ab677-4ff9-51a4-978c-3af418fd39eb",
+              "name": "nombre_paciente",
+              "type": "string",
+              "value": "Andrea"
+            },
+            {
+              "id": "22ec4383-02ea-54b3-81bb-fdf8ce253467",
+              "name": "consulta",
+              "type": "string",
+              "value": "¿Cuánto cuesta una limpieza y puedo reservar hoy a las 8 p. m. en Miraflores?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        64,
+        288
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "8833f2bf-b4e6-4449-a8d0-42ad97583fd9",
+      "name": "🤖 PASO 3 — Generar respuesta",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres el asistente informativo de ODONTOVIDA, clínica completamente ficticia usada en una práctica educativa. No eres profesional de salud y no realizas diagnósticos.\n\nDATOS AUTORIZADOS DEL CASO:\n- Miraflores: Lun-Sáb 8:00-20:00; Dom 9:00-14:00.\n- San Isidro: Lun-Vie 9:00-19:00; Sáb 9:00-13:00.\n- Surco: Lun-Sáb 8:00-19:00.\n- Primera evaluación: sin costo.\n- Limpieza y fluorización: S/ 120.\n- Blanqueamiento en consultorio: S/ 380.\n- Resina: S/ 150 por pieza.\n- Extracción simple: S/ 180.\n- Endodoncia: desde S/ 600.\n- Ortodoncia metálica: desde S/ 2,800.\n- Ortodoncia invisible: desde S/ 7,500.\n- Seguros del caso: Rímac, Pacífico, La Positiva y MAPFRE.\n\nREGLAS:\n1. Usa solo estos datos. Si falta un dato, dilo y ofrece derivar a coordinación.\n2. No diagnostiques, no recomiendes tratamientos y no minimices síntomas.\n3. No confirmes citas: no tienes calendario ni herramienta de reserva.\n4. Si solicitan una cita, pide sede, fecha preferida y franja horaria, y aclara que coordinación debe confirmar.\n5. Ante dolor intenso, sangrado persistente, traumatismo o dificultad para respirar, indica que busquen atención profesional urgente por los canales locales adecuados.\n6. Responde en español, con empatía y máximo 4 oraciones.\n7. No prometas atención «24/7» ni tiempos de respuesta."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=Nombre: {{ $json.nombre_paciente }}\nConsulta: {{ $json.consulta }}\n\nResponde respetando estrictamente los datos y límites del caso."
+      },
+      "position": [
+        320,
+        288
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "f19034d8-a8a0-4c9a-bf4f-d1f5ac951fe3",
+      "name": "🧠 Modelo — Gemini 2.5 Flash",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 1500,
+          "temperature": 0.2
+        }
+      },
+      "position": [
+        320,
+        512
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "d7071f4b-44cc-4048-a65b-56e6a56378a9",
+      "name": "📤 PASO 4 — Revisar respuesta",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9527237-8405-5f0d-aec5-eac7fd55cd87",
+              "name": "paciente",
+              "type": "string",
+              "value": "={{ $('📝 PASO 2 — Consulta del paciente').first().json.nombre_paciente }}"
+            },
+            {
+              "id": "a42cd704-84b3-55bb-858e-b77c2bcaf361",
+              "name": "respuesta_borrador",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text }}"
+            },
+            {
+              "id": "c445dcb9-f772-537b-8ff9-70c429f1db9c",
+              "name": "estado",
+              "type": "string",
+              "value": "RESPUESTA_INFORMATIVA_PARA_REVISION"
+            },
+            {
+              "id": "b1ce1c20-f32e-5505-b0e9-ab3c187eecea",
+              "name": "limite",
+              "type": "string",
+              "value": "No diagnostica ni confirma citas."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        592,
+        288
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "e5525f25-95b8-4395-85c5-9aff44e87e32",
+      "name": "🟢 EJECUTA W4",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Matriz de prueba\n\n1. Precio incluido.\n2. Servicio no incluido.\n3. Solicitud de diagnóstico.\n4. Solicitud de reservar una cita.\n5. Situación potencialmente urgente.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        -176,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "dbce2ec8-cdf8-4b92-abb1-753c698fb5bc",
+      "name": "🔵 CONCEPTO W4",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Asistente, no agente\n\nEl modelo responde con contexto autorizado, pero no tiene calendario ni herramientas. Por eso no puede comprobar disponibilidad ni crear una cita.",
+        "height": 220,
+        "width": 380
+      },
+      "position": [
+        224,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "03995bc6-6806-485a-836e-43d6c2665405",
+      "name": "🔴 SEGURIDAD W4",
+      "parameters": {
+        "color": 2,
+        "content": "## 🔴 Riesgo alto\n\nEn salud, evita afirmaciones clínicas, diagnósticos y garantías. Diseña rutas de escalamiento y revisión. Un System Prompt reduce riesgo, pero no sustituye controles del workflow.",
+        "height": 250,
+        "width": 380
+      },
+      "position": [
+        -240,
+        544
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "e449edd4-01a8-47aa-a943-5707965adb83",
+      "name": "🟡 RETO W4",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nEncuentra una pregunta que el asistente no pueda responder. Mejora la regla de derivación sin agregar información inventada ni ampliar capacidades inexistentes.",
+        "height": 220,
+        "width": 380
+      },
+      "position": [
+        672,
+        16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T05:07:46.042Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T05:07:46.042Z",
+      "workflowId": "ZxVYtsWuL7c9zMz6"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-05T06:37:35.752Z",
+  "versionCounter": 6,
+  "versionId": "932f9def-383e-4d2c-a328-5d8c5ffb68bf"
+}

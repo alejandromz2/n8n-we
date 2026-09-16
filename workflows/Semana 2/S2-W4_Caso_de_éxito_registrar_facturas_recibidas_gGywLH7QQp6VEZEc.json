@@ -1,0 +1,345 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Sacar RUC, monto y fecha",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "▶ PASO 1 — Iniciar caso facturas": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📧 PASO 2 — Correo con factura (ejemplo)",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📋 PASO 4 — Fila lista para Sheets": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "💬 PASO 5 — Aviso en Slack",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "📊 PASO 5b — Registrar en Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📧 PASO 2 — Correo con factura (ejemplo)": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Sacar RUC, monto y fecha",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🤖 PASO 3 — Sacar RUC, monto y fecha": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📋 PASO 4 — Fila lista para Sheets",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-12T03:22:33.725Z",
+  "description": null,
+  "id": "gGywLH7QQp6VEZEc",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S2-W4 | Caso de éxito: registrar facturas recibidas",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "e3d3dfe0-1915-4581-8b24-fb98c5eb37fd",
+      "name": "▶ PASO 1 — Iniciar caso facturas",
+      "parameters": {},
+      "position": [
+        -512,
+        400
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "e92ffcad-7698-4579-ab62-0a1f270e007f",
+      "name": "📧 PASO 2 — Correo con factura (ejemplo)",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc22c253-682f-4bc3-bf95-2e9ffeb343f6",
+              "name": "remitente",
+              "type": "string",
+              "value": "facturacion@suministroslima.pe"
+            },
+            {
+              "id": "b4c5f2d4-aae6-42de-a895-aff1b8bd36f9",
+              "name": "asunto",
+              "type": "string",
+              "value": "Factura FAC-1035"
+            },
+            {
+              "id": "af9d5f63-fc0a-47bb-8746-1781dbf387f9",
+              "name": "cuerpo",
+              "type": "string",
+              "value": "Adjuntamos factura FAC-1035. RUC 20123456789. /n Monto S/ 1250.00.dddd Vence el sss 30/09/2026. PDF adjunto: SI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -224,
+        400
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "94f3ffaf-d0dd-4057-8377-df7b25a367e0",
+      "name": "🤖 PASO 3 — Sacar RUC, monto y fecha",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Extrae solo datos que estén en el texto. No inventes. Si falta un dato, escribe FALTA."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=Asunto: {{ $json.asunto }}\nTexto: {{ $json.cuerpo }}\n\nDevuelve exactamente 4 líneas:\nnumero:\nruc:\nmonto:\nvence:\npdf: SI o NO"
+      },
+      "position": [
+        112,
+        400
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "7d61d443-20ca-4913-b3e2-0f2bc8e2b87f",
+      "name": "📋 PASO 4 — Fila lista para Sheets",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3d01558a-88ce-4bf4-8829-fff2c0f09066",
+              "name": "numero",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output }}"
+            },
+            {
+              "id": "f469c07c-47f7-4b38-a107-0294c275c199",
+              "name": "aviso_slack",
+              "type": "string",
+              "value": "=Nueva factura para registrar. Revisa el texto extraído."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        592,
+        368
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "credentials": {
+        "slackApi": {
+          "id": "0P4ZiIdlt8CYr4vJ",
+          "name": "Slack account 2"
+        }
+      },
+      "id": "c6937b72-04f8-4178-a1db-9f00c0382428",
+      "name": "💬 PASO 5 — Aviso en Slack",
+      "parameters": {
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "informal"
+        },
+        "otherOptions": {},
+        "select": "channel",
+        "text": "={{ $json.aviso_slack }}\n{{ $json.numero }}"
+      },
+      "position": [
+        944,
+        304
+      ],
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "webhookId": "e107cb97-1643-4def-941f-9a594a630410"
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
+        }
+      },
+      "id": "9026fc27-bf04-485e-ab59-5c669a813dc7",
+      "name": "📊 PASO 5b — Registrar en Sheets",
+      "parameters": {
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "autoMapInputData",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "numero",
+              "id": "numero",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "aviso_slack",
+              "id": "aviso_slack",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {}
+        },
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1Acm750RbOicdPPvEtx93Crfeb5BQ6oXAudbO340UJ4c"
+        },
+        "operation": "append",
+        "options": {},
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Hoja 1"
+        }
+      },
+      "position": [
+        960,
+        576
+      ],
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5
+    },
+    {
+      "id": "2d6e4b78-61ac-4f2a-8329-285a1a617eec",
+      "name": "🟢 EJECUTA W4",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Caso de éxito (solo mostrar)\n\nEste flujo es el ejemplo de la Pyme: correo → datos de la factura → Sheets y aviso.\n\n",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        -96,
+        112
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "5b622234-a3e4-4c63-8947-79840dba4baa",
+      "name": "🟡 RETO W4",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nBorra el monto del correo y ejecuta. El modelo debe marcar FALTA, no inventar un número.",
+        "height": 240,
+        "width": 444
+      },
+      "position": [
+        704,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "deepSeekApi": {
+          "id": "TYvoosnvBBtdWbia",
+          "name": "DeepSeek account 2"
+        }
+      },
+      "id": "7966ed29-4341-41d1-9e46-2f4ebeccf6dc",
+      "name": "DeepSeek Chat Model",
+      "parameters": {
+        "model": "deepseek-flash",
+        "options": {}
+      },
+      "position": [
+        112,
+        608
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-12T03:22:33.726Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-12T03:22:33.726Z",
+      "workflowId": "gGywLH7QQp6VEZEc"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-12T16:49:46.308Z",
+  "versionCounter": 44,
+  "versionId": "6b544c85-cf83-458f-aac3-df862768cc8f"
+}

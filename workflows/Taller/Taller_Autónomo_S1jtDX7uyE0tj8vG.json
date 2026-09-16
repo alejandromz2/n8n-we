@@ -1,0 +1,272 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "B — Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "B3 ✍️ Completar System Prompt",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "B2 📝 Solicitud de prueba": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "B3 ✍️ Completar System Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "B3 ✍️ Completar System Prompt": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "B4 ✅ Revisar con rúbrica",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "B2 📝 Solicitud de prueba",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T16:26:12.795Z",
+  "description": null,
+  "id": "S1jtDX7uyE0tj8vG",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Taller Autónomo",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "caf47821-a32c-4324-9348-3b95d04d9429",
+      "name": "B2 📝 Solicitud de prueba",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9aed7ad-fa0f-5ec4-b7da-179783b2f964",
+              "name": "solicitud_usuario",
+              "type": "string",
+              "value": "Necesito responder a un cliente molesto por un retraso y proponer el siguiente paso sin prometer una fecha que todavía no está confirmada."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        32,
+        288
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "cc398910-9f1b-4ae6-a7c0-123279ba768f",
+      "name": "B3 ✍️ Completar System Prompt",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "ROL: [COMPLETAR: quién es el asistente]\nOBJETIVO: [COMPLETAR: qué resultado produce]\nUSUARIO OBJETIVO: [COMPLETAR]\nCONTEXTO AUTORIZADO: [COMPLETAR con datos ficticios del caso]\nPERSONALIDAD Y TONO: [COMPLETAR]\nREGLAS: [COMPLETAR al menos 3]\nRESTRICCIONES Y ESCALAMIENTO: [COMPLETAR al menos 2]\nHERRAMIENTAS PERMITIDAS: Ninguna en esta práctica; no afirmar que se ejecutaron acciones.\nFORMATO DE SALIDA: [COMPLETAR]\n\nResponde a la solicitud del usuario aplicando únicamente lo que esté definido. Si un bloque sigue incompleto, indícalo antes de responder."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $json.solicitud_usuario }}"
+      },
+      "position": [
+        336,
+        288
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "8e3594c9-c908-4532-b8a1-eafa0ca30bd7",
+      "name": "B — Gemini 2.5 Flash",
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {
+          "maxOutputTokens": 650,
+          "temperature": 0.3
+        }
+      },
+      "position": [
+        336,
+        512
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "8164ecff-434e-4e79-95d7-5747b03e02a1",
+      "name": "B4 ✅ Revisar con rúbrica",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e337d54c-8059-5c1b-8ff0-dd3f37cb070c",
+              "name": "respuesta",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text }}"
+            },
+            {
+              "id": "0433c321-5a46-5742-b3c3-30d6e1720563",
+              "name": "rubrica",
+              "type": "string",
+              "value": "Rol claro | objetivo verificable | contexto suficiente | tono | reglas | límites | formato"
+            },
+            {
+              "id": "22c7fb13-9c3b-5150-b3d6-42ef3bdfcc70",
+              "name": "autoevaluacion",
+              "type": "string",
+              "value": "Puntúa cada criterio de 0 a 2 y mejora el criterio más débil."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        608,
+        288
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "6d55111e-1a4f-43eb-9e63-6e07c1d3ce23",
+      "name": "B 🟠 EDITA AQUÍ",
+      "parameters": {
+        "color": 3,
+        "content": "## B — Taller autónomo (20 min)\n\nAbre **B3** y reemplaza todos los bloques `[COMPLETAR]`. Elige un asistente corporativo distinto al organizador de agenda. Usa solo datos ficticios.",
+        "height": 230,
+        "width": 420
+      },
+      "position": [
+        -240,
+        560
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "fe92597c-f9bb-4203-8f75-63a275fd7815",
+      "name": "B 🟢 SECUENCIA",
+      "parameters": {
+        "color": 5,
+        "content": "## B — Secuencia del estudiante\n\n1. Define la identidad.\n2. Añade contexto autorizado.\n3. Escribe reglas y límites.\n4. Define el formato.\n5. Ejecuta dos casos normales y un caso límite.\n6. Itera una vez.",
+        "height": 260,
+        "width": 410
+      },
+      "position": [
+        0,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "7cc9800a-a23b-492e-8eec-dfce6646cf14",
+      "name": "B 🔵 RÚBRICA",
+      "parameters": {
+        "color": 4,
+        "content": "## B — Feedback entre pares\n\n0 = ausente · 1 = parcial · 2 = claro\n\nEvalúa: rol, objetivo, contexto, tono, reglas, restricciones/escalamiento y formato. Máximo: 14 puntos.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        624,
+        560
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "77eccd4d-738c-495c-9c6d-70e31d6dd9fb",
+      "name": "B 🟡 SALIDA",
+      "parameters": {
+        "content": "## B — Evidencia de aprendizaje\n\nEntrega: System Prompt final + 3 entradas de prueba + salidas + una mejora realizada después del feedback.",
+        "height": 210,
+        "width": 350
+      },
+      "position": [
+        848,
+        32
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "a0ea0d09-492f-4726-ad46-ece185f0fc93",
+      "name": "When clicking ‘Execute workflow’",
+      "parameters": {},
+      "position": [
+        -304,
+        304
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T16:26:12.796Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T16:26:12.796Z",
+      "workflowId": "S1jtDX7uyE0tj8vG"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-05T16:35:41.771Z",
+  "versionCounter": 4,
+  "versionId": "0bf2dac1-640d-4e61-92b6-838e3e084834"
+}

@@ -1,0 +1,275 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — El LLM responde",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "▶ PASO 1 — Iniciar demo": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "✏️ PASO 2 — Escribir pregunta",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "✏️ PASO 2 — Escribir pregunta": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — El LLM responde",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🤖 PASO 3 — El LLM responde": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📊 PASO 4 — Observar resultado",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T05:06:06.441Z",
+  "description": null,
+  "id": "5KKbaqleMjQb5vJa",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S1-W1 | ¿Qué es un LLM? — Demo práctica",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "bfa8202c-4825-45ec-a93c-e1df6edaed16",
+      "name": "✏️ PASO 2 — Escribir pregunta",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ae810da-3512-5aa5-b5e4-06f8e8821235",
+              "name": "pregunta_usuario",
+              "type": "string",
+              "value": "Necesito responder a un cliente molesto por un retraso y proponer el siguiente paso sin prometer una fecha que todavía no está confirmada."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        -160,
+        224
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "88d83291-22f7-4d83-ac5e-9a6f881eb64a",
+      "name": "🤖 PASO 3 — El LLM responde",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=ROL: [Lider de SAC]\nOBJETIVO: [Produce analisis completo de la incomodidad del cliente]\nUSUARIO OBJETIVO: [Cliente molesto]\nCONTEXTO AUTORIZADO: [Sector de telecomunicaciones]\nPERSONALIDAD Y TONO: [Con respeto, empatia, criterio]\nREGLAS: [Tener en cuenta una respuesta salominica, porque el cliente podria pedir libro de reclamacion.\nDarle una salida u opcion de otro negocio.]\nRESTRICCIONES Y ESCALAMIENTO: [No llegar hasta el gerente de area]\nHERRAMIENTAS PERMITIDAS: Ninguna en esta práctica; no afirmar que se ejecutaron acciones.\nFORMATO DE SALIDA: [documento de sac, con buen atencion en escala]"
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $json.pregunta_usuario }}"
+      },
+      "position": [
+        112,
+        224
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "d32b3647-202b-426e-b43b-12fd0e0a78bd",
+      "name": "📊 PASO 4 — Observar resultado",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef522b68-7188-5b3b-85db-3c0760c6605d",
+              "name": "pregunta",
+              "type": "string",
+              "value": "={{ $('✏️ PASO 2 — Escribir pregunta').first().json.pregunta_usuario }}"
+            },
+            {
+              "id": "cc251fd1-3f53-55cb-a9c8-01fe584b0c1a",
+              "name": "respuesta_llm",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text ?? 'Sin respuesta' }}"
+            },
+            {
+              "id": "2ebe8616-bed8-55e1-ac4a-1f67f74066b7",
+              "name": "tokens_aprox_estimados",
+              "type": "number",
+              "value": "={{ Math.round(String($json.text ?? $json.output ?? $json.response?.text ?? '').length / 4) }}"
+            },
+            {
+              "id": "ac603c1d-369d-57c0-8db5-ed6396c5dfcd",
+              "name": "modelo",
+              "type": "string",
+              "value": "Gemini 2.5 Flash"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        512,
+        224
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "21f1a61a-6cff-435b-b620-a12df2fdc564",
+      "name": "🟠 CONFIGURA W1",
+      "parameters": {
+        "color": 3,
+        "content": "## 🟠 Antes de ejecutar\n\n1. Abre el nodo **Modelo**.\n2. Selecciona o crea la credencial **Gemini API Key**.\n3. Confirma que el modelo disponible sea **Gemini 2.5 Flash**.\n\nNo compartas la API key en pantalla ni dentro del JSON.",
+        "height": 260,
+        "width": 380
+      },
+      "position": [
+        -448,
+        480
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "53d51c46-decd-4227-998f-f90d0428b76e",
+      "name": "🟢 EJECUTA W1",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Práctica de 5 minutos\n\n1. Ejecuta una vez sin cambiar nada.\n2. Cambia solo la pregunta.\n3. Repite exactamente la misma pregunta.\n4. Compara qué se mantiene y qué cambia.",
+        "height": 230,
+        "width": 380
+      },
+      "position": [
+        -32,
+        -48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "ea2bbe02-1a82-4b3b-b52f-3861529284b4",
+      "name": "🔵 OBSERVA W1",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Idea clave\n\nEl LLM genera una respuesta probable a partir del texto recibido. No está consultando una base empresarial ni verificando hechos.\n\n`tokens_aprox_estimados` es una aproximación didáctica por caracteres, no el consumo real reportado por la API.",
+        "height": 260,
+        "width": 380
+      },
+      "position": [
+        400,
+        448
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "0b9934c9-dda8-4690-9dc3-0972e0cedfb1",
+      "name": "🟡 RETO W1",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nCambia únicamente la temperatura: prueba **0.1** y luego **1.1**. Mantén la misma pregunta.\n\nPregunta al grupo: ¿qué cambió en variación, detalle y tono? La temperatura no garantiza exactitud.",
+        "height": 230,
+        "width": 380
+      },
+      "position": [
+        400,
+        -48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "9e4ade45-a2e2-4af9-aa9d-f87e434f704c",
+      "name": "▶ PASO 1 — Iniciar demo",
+      "parameters": {},
+      "position": [
+        -400,
+        224
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "deepSeekApi": {
+          "id": "TYvoosnvBBtdWbia",
+          "name": "DeepSeek account 2"
+        }
+      },
+      "id": "8d5a7aac-156c-4d7a-975c-3a94ec616e72",
+      "name": "DeepSeek Chat Model",
+      "parameters": {
+        "model": "deepseek-flash",
+        "options": {}
+      },
+      "position": [
+        48,
+        432
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T05:06:06.443Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T05:06:06.443Z",
+      "workflowId": "5KKbaqleMjQb5vJa"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-12T02:28:13.072Z",
+  "versionCounter": 58,
+  "versionId": "e28f7447-c02f-4c3b-8bf2-ce2d741619ab"
+}

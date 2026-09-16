@@ -1,0 +1,286 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "▶ PASO 1 — Iniciar caso LUMINA": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📝 PASO 2 — Datos de la consulta",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📝 PASO 2 — Datos de la consulta": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Redactar borrador",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🤖 PASO 3 — Redactar borrador": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "👤 PASO 4 — Preparar revisión humana",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🧠 Modelo — Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Redactar borrador",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T05:07:08.472Z",
+  "description": null,
+  "id": "06oZDZWkhR3vtqRI",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S1-W3 | Asistente de email LUMINA",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "02fbed30-3d1c-4597-ad57-6c5e1cf70134",
+      "name": "▶ PASO 1 — Iniciar caso LUMINA",
+      "parameters": {},
+      "position": [
+        -128,
+        320
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "2cff2e20-c435-4d33-a3b4-20e98292a06a",
+      "name": "📝 PASO 2 — Datos de la consulta",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f8808526-2efe-5b9f-a5e7-0e706f1c709c",
+              "name": "nombre_cliente",
+              "type": "string",
+              "value": "Carlos Mendoza"
+            },
+            {
+              "id": "e6d65188-fe62-5c2e-85b0-3727afd9ef8f",
+              "name": "email_cliente",
+              "type": "string",
+              "value": "cliente@example.com"
+            },
+            {
+              "id": "f4a1b93b-aae3-5f17-a5f6-64267285ccac",
+              "name": "asunto",
+              "type": "string",
+              "value": "Consulta sobre diseño de logo"
+            },
+            {
+              "id": "d0ecc899-8544-5955-9963-72e012658aca",
+              "name": "mensaje_cliente",
+              "type": "string",
+              "value": "Hola, necesito un logo para una empresa de tecnología. ¿Cuáles son sus precios y tiempos?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        128,
+        320
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "b2915d40-6695-4f44-9b3b-1173f8ace975",
+      "name": "🤖 PASO 3 — Redactar borrador",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un asistente de redacción para LUMINA CREATIVA, empresa ficticia usada únicamente en clase.\n\nCATÁLOGO AUTORIZADO:\n- Logo básico: S/ 800, 5 días hábiles.\n- Logo premium y manual de marca: S/ 1,500, 7 días hábiles.\n- Branding completo: S/ 3,200, 15 días hábiles.\n- Paquete de 10 posts: S/ 350.\n- Community Management: desde S/ 1,200 al mes.\n- Sitio web corporativo: desde S/ 2,800.\n- Descuento: 10% solo en contratos de 3 meses o más.\n\nINSTRUCCIONES:\n1. Redacta únicamente el cuerpo del correo; no repitas el asunto.\n2. Personaliza con el nombre del cliente.\n3. Tono cálido, profesional y orientado a una siguiente conversación.\n4. No inventes datos, disponibilidad, descuentos ni compromisos.\n5. Si falta información, indica que será confirmada por el equipo.\n6. Máximo 170 palabras.\n7. Firma: «Equipo de Cuentas | LUMINA CREATIVA».\n8. El texto es un borrador y no debe presentarse como enviado."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=Nombre del cliente: {{ $json.nombre_cliente }}\nCorreo del cliente: {{ $json.email_cliente }}\nAsunto recibido: {{ $json.asunto }}\nMensaje del cliente: {{ $json.mensaje_cliente }}\n\nRedacta un borrador de respuesta usando solo el catálogo autorizado."
+      },
+      "position": [
+        384,
+        320
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "5ffe8c37-944c-4b16-a558-cf630992bca9",
+      "name": "🧠 Modelo — Gemini 2.5 Flash",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 600,
+          "temperature": 0.3
+        }
+      },
+      "position": [
+        384,
+        544
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "99a4335e-d07d-4262-842f-c5b6e382f2d9",
+      "name": "👤 PASO 4 — Preparar revisión humana",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eedd187c-c1d7-5c2f-8bb7-25ac29e79fde",
+              "name": "estado",
+              "type": "string",
+              "value": "PENDIENTE_DE_APROBACION"
+            },
+            {
+              "id": "8615b17e-ea48-55e7-bd06-178b2b868f8b",
+              "name": "para",
+              "type": "string",
+              "value": "={{ $('📝 PASO 2 — Datos de la consulta').first().json.email_cliente }}"
+            },
+            {
+              "id": "bd87a81c-0567-58e2-b7e8-88bd7ceb6651",
+              "name": "asunto",
+              "type": "string",
+              "value": "={{ 'RE: ' + $('📝 PASO 2 — Datos de la consulta').first().json.asunto + ' — LUMINA CREATIVA' }}"
+            },
+            {
+              "id": "4ca30677-2e37-5964-b019-9f9d59ec5fba",
+              "name": "borrador",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text }}"
+            },
+            {
+              "id": "b89e1aad-c3a0-5586-b841-825c908adc25",
+              "name": "accion_siguiente",
+              "type": "string",
+              "value": "Revisar datos, tono y compromisos antes de crear un borrador en Gmail."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        656,
+        320
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "728bffea-54ab-47d6-92bc-05395b2a0fcc",
+      "name": "🟢 EJECUTA W3",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Práctica guiada\n\n1. Ejecuta el caso base.\n2. Cambia el sector del cliente.\n3. Pide un plazo no incluido.\n4. Revisa si el borrador declara el dato faltante.",
+        "height": 230,
+        "width": 380
+      },
+      "position": [
+        96,
+        32
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "dd326e2a-4cf8-4af3-8c54-adffc1904ded",
+      "name": "🔵 CONCEPTO W3",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Clasificación correcta\n\nEste es un **workflow asistido por IA**: el flujo está predeterminado y el LLM redacta texto. No es todavía un agente, porque el modelo no decide qué herramienta utilizar.",
+        "height": 230,
+        "width": 380
+      },
+      "position": [
+        544,
+        32
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "0137125d-8745-443c-b5c5-aec3e3247f34",
+      "name": "🔴 SEGURIDAD W3",
+      "parameters": {
+        "color": 2,
+        "content": "## 🔴 Human-in-the-loop\n\nAntes de cualquier envío real, una persona debe revisar destinatario, precios, plazos, promesas y tono. Para una práctica inicial, crear un borrador es más seguro que enviar automáticamente.",
+        "height": 250,
+        "width": 380
+      },
+      "position": [
+        -240,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T05:07:08.473Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T05:07:08.473Z",
+      "workflowId": "06oZDZWkhR3vtqRI"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-05T06:34:08.026Z",
+  "versionCounter": 8,
+  "versionId": "9b2eee66-39dc-498b-b8d2-3dc5a1ce9e5d"
+}

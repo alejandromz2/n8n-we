@@ -1,0 +1,269 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Responder solo con el documento",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "▶ PASO 1 — Iniciar": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📄 PASO 2 — Documento de la empresa",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "📄 PASO 2 — Documento de la empresa": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🤖 PASO 3 — Responder solo con el documento",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🤖 PASO 3 — Responder solo con el documento": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "📊 PASO 4 — Ver respuesta",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-12T03:20:35.381Z",
+  "description": null,
+  "id": "xCmCekYrH7kqSV17",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S2-W3 | RAG: responder con un documento de la empresa",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "802fa6a8-0466-4544-8448-125c010f33e1",
+      "name": "▶ PASO 1 — Iniciar",
+      "parameters": {},
+      "position": [
+        -160,
+        256
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "132ddb66-1a1e-47ef-9abb-532b0e3b8ba4",
+      "name": "📄 PASO 2 — Documento de la empresa",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5622c594-8c8e-4816-a64b-6b6c88f4ba8e",
+              "name": "documento",
+              "type": "string",
+              "value": "POLÍTICA DE PAGOS — Pyme comercial (ejemplo de clase)\n1. Toda factura recibida se registra el mismo día: RUC, número, monto y fecha de vencimiento.\n2. Se paga a 30 días si el RUC está en la lista de proveedores aprobados.\n3. Si el monto es mayor a S/ 5,000, necesita visto bueno de gerencia.\n4. No se pagan facturas sin PDF adjunto.\n5. Proveedores aprobados: 20123456789 (Suministros Lima), 20987654321 (Papelería del Sur)."
+            },
+            {
+              "id": "db516ff8-7bc0-4279-be6a-35ce55d0fe41",
+              "name": "pregunta",
+              "type": "string",
+              "value": "Llegó la factura FAC-1044 del RUC 20123456789 por S/ 1,250. ¿La registro y cuándo se paga?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        96,
+        256
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "a3b9a06b-125d-4f54-801e-a9b5a518f54e",
+      "name": "🤖 PASO 3 — Responder solo con el documento",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres un asistente de oficina. Usa SOLO el documento. No inventes reglas ni fechas."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "=Documento:\n{{ $json.documento }}\n\nPregunta:\n{{ $json.pregunta }}\n\nResponde en 3 frases. Si el documento no lo dice, escribe: No está en el documento."
+      },
+      "position": [
+        384,
+        256
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "id": "0d786609-ccbd-4228-b305-0418186adc5d",
+      "name": "📊 PASO 4 — Ver respuesta",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5041d08e-d00d-4384-b108-b610486805ea",
+              "name": "pregunta",
+              "type": "string",
+              "value": "={{ $('📄 PASO 2 — Documento de la empresa').first().json.pregunta }}"
+            },
+            {
+              "id": "48ba8d1d-2ae9-47c8-ae88-3ffdec736249",
+              "name": "respuesta",
+              "type": "string",
+              "value": "={{ $json.text ?? $json.output ?? $json.response?.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        800,
+        272
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "65c8c6cf-8ac3-4db2-a681-ab40eb8f488d",
+      "name": "🟠 CONFIGURA W3",
+      "parameters": {
+        "color": 3,
+        "content": "## 🟠 Configura\n\nSolo la credencial de Gemini.\n\nEl documento está escrito en el paso 2 (no hace falta PDF todavía). Eso es la idea de RAG: la IA usa **tu** texto, no lo que inventa.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        -224,
+        512
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "6aacd6f5-6e6e-477d-8407-c7b49e64565e",
+      "name": "🟢 EJECUTA W3",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Ejecuta\n\nCorre el flujo. Luego cambia la pregunta a un RUC que **no** esté en la lista. La respuesta debe decir que no está en el documento.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        96,
+        -16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "460ddf04-ebf5-4216-90ac-b60d17e01069",
+      "name": "🔵 CONCEPTO W3",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 RAG en una frase\n\nLa IA no adivina el catálogo ni las reglas: **lee el documento** que le pasamos en el paso 2.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        720,
+        528
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "a233dfdc-7251-4265-a648-8e9d3d1d898f",
+      "name": "🟡 RETO W3",
+      "parameters": {
+        "content": "## 🟡 Reto\n\nPregunta por S/ 8,000. ¿Pide visto bueno de gerencia, según el documento?",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        704,
+        -16
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "deepSeekApi": {
+          "id": "TYvoosnvBBtdWbia",
+          "name": "DeepSeek account 2"
+        }
+      },
+      "id": "5baaf525-c1b7-401d-bc20-452041ee7869",
+      "name": "DeepSeek Chat Model",
+      "parameters": {
+        "model": "deepseek-flash",
+        "options": {}
+      },
+      "position": [
+        272,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-12T03:20:35.383Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-12T03:20:35.383Z",
+      "workflowId": "xCmCekYrH7kqSV17"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-12T15:50:23.612Z",
+  "versionCounter": 9,
+  "versionId": "ad3980ce-4149-40ea-8f9e-bd73b45ba214"
+}

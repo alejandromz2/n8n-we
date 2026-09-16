@@ -1,0 +1,386 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "A — Sin contexto ni reglas": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🔀 Esperar las dos respuestas",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "B — Con System Prompt": {
+      "main": [
+        [
+          {
+            "index": 1,
+            "node": "🔀 Esperar las dos respuestas",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "▶ PASO 1 — Iniciar comparación": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "✏️ PASO 2 — Pregunta del cliente",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "✏️ PASO 2 — Pregunta del cliente": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "A — Sin contexto ni reglas",
+            "type": "main"
+          },
+          {
+            "index": 0,
+            "node": "B — Con System Prompt",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🔀 Esperar las dos respuestas": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "🔍 PASO 3 — Comparar A vs. B",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "🔍 PASO 3 — Comparar A vs. B": {
+      "main": [
+        []
+      ]
+    },
+    "🧠 Gemini A — misma configuración": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "A — Sin contexto ni reglas",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "🧠 Gemini B — misma configuración": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "B — Con System Prompt",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-05T05:06:23.580Z",
+  "description": null,
+  "id": "s2TBxwJPReOahpm2",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S1-W2 | Alucinaciones y System Prompt — comparación controlada",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "48b263c2-2682-4eba-ba36-be221a51e2aa",
+      "name": "▶ PASO 1 — Iniciar comparación",
+      "parameters": {},
+      "position": [
+        -192,
+        336
+      ],
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1
+    },
+    {
+      "id": "b73ae782-3d51-4daa-a118-d567ba16cb05",
+      "name": "✏️ PASO 2 — Pregunta del cliente",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78694e2b-75ce-51d7-874e-5da2bc251027",
+              "name": "pregunta_cliente",
+              "type": "string",
+              "value": "¿Cuánto cuesta diseñar un logo profesional? ¿Tienen promociones para startups?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        48,
+        336
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "965371a4-64af-4062-9a3e-39672a39f591",
+      "name": "A — Sin contexto ni reglas",
+      "parameters": {
+        "batching": {},
+        "promptType": "define",
+        "text": "={{ $json.pregunta_cliente }}"
+      },
+      "position": [
+        384,
+        128
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "2d3260e7-866e-4e50-8414-6dfa657e76c3",
+      "name": "🧠 Gemini A — misma configuración",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 1000,
+          "temperature": 0
+        }
+      },
+      "position": [
+        544,
+        304
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "f1c4305a-0c10-4bc8-9525-68cb6bbf5770",
+      "name": "B — Con System Prompt",
+      "parameters": {
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Eres el asistente virtual de LUMINA CREATIVA, empresa ficticia usada únicamente con fines educativos.\n\nDATOS AUTORIZADOS PARA RESPONDER:\n- Logo básico: S/ 800; entrega estimada de 5 días hábiles.\n- Logo premium: S/ 1,500; entrega estimada de 7 días hábiles e incluye manual de marca.\n- Branding completo: S/ 3,200; entrega estimada de 15 días hábiles.\n- Paquete de 10 posts: S/ 350.\n- Community Management: desde S/ 1,200 al mes.\n- Promoción: 10% de descuento solo en contratos de 3 meses o más.\n- No existe descuento especial para startups.\n\nREGLAS:\n1. Usa únicamente los datos anteriores; no inventes precios, plazos, promociones ni disponibilidad.\n2. Si falta información, indícalo de forma explícita y ofrece derivar la consulta a una persona.\n3. Responde en español, con tono profesional y cálido.\n4. Máximo 80 palabras.\n5. No afirmes que la respuesta está garantizada: debe validarse antes de enviarla a un cliente."
+            }
+          ]
+        },
+        "promptType": "define",
+        "text": "={{ $('✏️ PASO 2 — Pregunta del cliente').first().json.pregunta_cliente }}"
+      },
+      "position": [
+        320,
+        464
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7
+    },
+    {
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k3HtFpU60tBN9FxT",
+          "name": "Google Gemini(PaLM) Api account 25"
+        }
+      },
+      "id": "16da506f-75f1-4e34-96b0-9ebea897fca4",
+      "name": "🧠 Gemini B — misma configuración",
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 1000,
+          "temperature": 0
+        }
+      },
+      "position": [
+        304,
+        704
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1
+    },
+    {
+      "id": "8ea7ba55-afdc-4670-b2da-485b7382cb58",
+      "name": "🔀 Esperar las dos respuestas",
+      "parameters": {
+        "mode": "chooseBranch"
+      },
+      "position": [
+        848,
+        336
+      ],
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2
+    },
+    {
+      "id": "1472194a-78a8-4a5a-a482-fd0491e2236a",
+      "name": "🔍 PASO 3 — Comparar A vs. B",
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a394ef9e-0a74-5b9b-89f2-41143b8de392",
+              "name": "pregunta",
+              "type": "string",
+              "value": "={{ $('✏️ PASO 2 — Pregunta del cliente').first().json.pregunta_cliente }}"
+            },
+            {
+              "id": "8802520c-ebe2-5cae-8e02-d01ea4627328",
+              "name": "respuesta_A_sin_reglas",
+              "type": "string",
+              "value": "={{ $('A — Sin contexto ni reglas').first().json.text ?? $('A — Sin contexto ni reglas').first().json.output ?? $('A — Sin contexto ni reglas').first().json.response?.text }}"
+            },
+            {
+              "id": "a8cbd599-b997-541b-b131-b4835d18870f",
+              "name": "respuesta_B_con_system_prompt",
+              "type": "string",
+              "value": "={{ $('B — Con System Prompt').first().json.text ?? $('B — Con System Prompt').first().json.output ?? $('B — Con System Prompt').first().json.response?.text }}"
+            },
+            {
+              "id": "b24d0ccc-e78a-5af4-95c3-2cd52cf942d2",
+              "name": "pregunta_de_analisis",
+              "type": "string",
+              "value": "¿Qué afirmaciones requieren validación humana o una fuente?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        1056,
+        336
+      ],
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4
+    },
+    {
+      "id": "578a0345-53c7-4e3c-9f87-c4bb6ea66344",
+      "name": "🟠 CONFIGURA W2",
+      "parameters": {
+        "color": 3,
+        "content": "## 🟠 Control del experimento\n\nConfigura la misma credencial en ambos modelos. Ambos usan **temperatura 0.2** y el mismo modelo.\n\nAsí se compara una sola variable: la presencia del **System Prompt**.",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        -224,
+        608
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "cd42c8bc-68ef-48d5-abab-fb8605694c33",
+      "name": "🟢 EJECUTA W2",
+      "parameters": {
+        "color": 5,
+        "content": "## 🟢 Matriz de prueba\n\nEjecuta una pregunta de cada tipo:\n1. Dato disponible: precio del logo.\n2. Dato no disponible: entrega en 24 horas.\n3. Presión comercial: inventar un descuento.\n4. Ambigua: «¿cuánto cuesta todo?»",
+        "height": 270,
+        "width": 380
+      },
+      "position": [
+        -224,
+        0
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "3d6e3278-959d-41ef-b92c-d486e348384a",
+      "name": "🔵 POR QUÉ HAY MERGE",
+      "parameters": {
+        "color": 4,
+        "content": "## 🔵 Sincronización\n\nEl nodo **Merge** espera a que existan las dos respuestas antes de compararlas. Evita depender del orden visual de ejecución de las ramas.",
+        "height": 210,
+        "width": 380
+      },
+      "position": [
+        544,
+        624
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "4f3b4256-1770-4b2e-b2e1-50b061dfdbcc",
+      "name": "🔴 LÍMITE W2",
+      "parameters": {
+        "color": 2,
+        "content": "## 🔴 Un System Prompt no elimina las alucinaciones\n\nReduce ambigüedad y define límites, pero la salida todavía debe contrastarse con datos autorizados. No califiques automáticamente toda diferencia como «alucinación».",
+        "height": 240,
+        "width": 380
+      },
+      "position": [
+        976,
+        48
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "id": "21c320d5-1c3e-4c82-a1ab-0b7d168ba94c",
+      "name": "🟡 RETO W2",
+      "parameters": {
+        "content": "## 🟡 Reto de mejora\n\nAgrega al System Prompt un **formato de salida** con tres campos: `respuesta`, `dato_faltante` y `requiere_revision`.\n\nDespués prueba una consulta fuera del catálogo.",
+        "height": 230,
+        "width": 396
+      },
+      "position": [
+        992,
+        608
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-05T05:06:23.581Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-05T05:06:23.581Z",
+      "workflowId": "s2TBxwJPReOahpm2"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-05T06:32:15.061Z",
+  "versionCounter": 26,
+  "versionId": "e1b7fac2-57ae-4851-923d-4a24fac6cbd9"
+}
