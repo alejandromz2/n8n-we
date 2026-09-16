@@ -1,4 +1,4 @@
-# n8n-we
+# Diploma - N8N Agentes IA
 
 Backup versionado de los workflows de n8n usados en el curso/talleres de Educación Ejecutiva. Los workflows se exportan vía la API pública de n8n y se guardan como JSON en este repo, organizados por semana.
 
