@@ -125,6 +125,60 @@
           ]
         ]
       },
+      "IF - ¿Parece un distrito válido?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Google Sheets - Guardar distrito (sesión completa)",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "HTTP Request - Reintentar pregunta de distrito",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "IF - ¿Parece un nombre válido?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Google Sheets - Guardar nombre",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "HTTP Request - Reintentar pregunta de nombre",
+              "type": "main"
+            }
+          ]
+        ]
+      },
+      "IF - ¿Parece un presupuesto válido?": {
+        "main": [
+          [
+            {
+              "index": 0,
+              "node": "Google Sheets - Guardar presupuesto",
+              "type": "main"
+            }
+          ],
+          [
+            {
+              "index": 0,
+              "node": "HTTP Request - Reintentar pregunta de presupuesto",
+              "type": "main"
+            }
+          ]
+        ]
+      },
       "LLM - Clasificar intención del cliente": {
         "main": [
           [
@@ -217,21 +271,21 @@
           [
             {
               "index": 0,
-              "node": "Google Sheets - Guardar nombre",
+              "node": "IF - ¿Parece un nombre válido?",
               "type": "main"
             }
           ],
           [
             {
               "index": 0,
-              "node": "Google Sheets - Guardar presupuesto",
+              "node": "IF - ¿Parece un presupuesto válido?",
               "type": "main"
             }
           ],
           [
             {
               "index": 0,
-              "node": "Google Sheets - Guardar distrito (sesión completa)",
+              "node": "IF - ¿Parece un distrito válido?",
               "type": "main"
             }
           ],
@@ -256,7 +310,7 @@
         ]
       }
     },
-    "createdAt": "2026-09-19T03:39:13.523Z",
+    "createdAt": "2026-09-19T05:08:23.888Z",
     "description": null,
     "name": null,
     "nodeGroups": [],
@@ -270,7 +324,7 @@
           "width": 480
         },
         "position": [
-          -2300,
+          -2304,
           -1200
         ],
         "type": "n8n-nodes-base.stickyNote",
@@ -282,11 +336,10 @@
         "parameters": {
           "httpMethod": "POST",
           "options": {},
-          "path": "whatsapp-inbound-inmolima",
-          "responseMode": "onReceived"
+          "path": "whatsapp-inbound-inmolima"
         },
         "position": [
-          -2300,
+          -2304,
           0
         ],
         "type": "n8n-nodes-base.webhook",
@@ -303,33 +356,32 @@
                 "id": "1",
                 "name": "telefono",
                 "type": "string",
-                "value": "={{ $json.body.from }}"
+                "value": "={{ ($json.body.whatsappInboundMessage.from || $json.body.whatsappInboundMessage.fromUserId).replace(/[^0-9]/g, '') }}"
               },
               {
                 "id": "2",
                 "name": "nombre_whatsapp",
                 "type": "string",
-                "value": "={{ $json.body.name }}"
+                "value": "={{ $json.body.whatsappInboundMessage.customerProfile.name }}"
               },
               {
                 "id": "3",
                 "name": "texto",
                 "type": "string",
-                "value": "={{ $json.body.text.body }}"
+                "value": "={{ $json.body.whatsappInboundMessage.text.body }}"
               },
               {
                 "id": "4",
                 "name": "texto_normalizado",
                 "type": "string",
-                "value": "={{ ($json.body.text.body || '').toLowerCase().trim() }}"
+                "value": "={{ ($json.body.whatsappInboundMessage.text.body || '').toLowerCase().trim() }}"
               }
             ]
           },
-          "mode": "manual",
           "options": {}
         },
         "position": [
-          -2020,
+          -2016,
           0
         ],
         "type": "n8n-nodes-base.set",
@@ -339,8 +391,8 @@
         "alwaysOutputData": true,
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-buscar-sesion",
@@ -348,8 +400,10 @@
         "parameters": {
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "filtersUI": {
             "values": [
@@ -359,18 +413,17 @@
               }
             ]
           },
-          "operation": "read",
-          "options": {
-            "returnAllMatches": "first"
-          },
+          "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=0",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -1740,
+          -1744,
           0
         ],
         "type": "n8n-nodes-base.googleSheets",
@@ -383,7 +436,7 @@
           "jsCode": "const original = $('Set - Normalizar datos del mensaje').item.json;\nconst sesion = $input.item.json || {};\n\nreturn [{\n  json: {\n    telefono: original.telefono,\n    nombre_whatsapp: original.nombre_whatsapp,\n    texto: original.texto,\n    texto_normalizado: original.texto_normalizado,\n    etapa: sesion.Etapa || 'inicio',\n    nombre: sesion.Nombre || '',\n    interes: sesion.Interes || '',\n    presupuesto: sesion.Presupuesto || '',\n    distrito: sesion.Distrito || ''\n  }\n}];"
         },
         "position": [
-          -1460,
+          -1456,
           0
         ],
         "type": "n8n-nodes-base.code",
@@ -395,8 +448,6 @@
         "notes": "Salida 4 (índice 4) = conversación nueva ('inicio', valor por defecto que pone el Code node anterior cuando no hay sesión previa).",
         "notesInFlow": true,
         "parameters": {
-          "fallbackOutput": "none",
-          "mode": "rules",
           "options": {},
           "rules": {
             "values": [
@@ -416,10 +467,10 @@
                   "options": {
                     "caseSensitive": true,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "esperando_opcion"
+                }
               },
               {
                 "conditions": {
@@ -437,10 +488,10 @@
                   "options": {
                     "caseSensitive": true,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "esperando_nombre"
+                }
               },
               {
                 "conditions": {
@@ -458,10 +509,10 @@
                   "options": {
                     "caseSensitive": true,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "esperando_presupuesto"
+                }
               },
               {
                 "conditions": {
@@ -479,10 +530,10 @@
                   "options": {
                     "caseSensitive": true,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "esperando_distrito"
+                }
               },
               {
                 "conditions": {
@@ -500,16 +551,16 @@
                   "options": {
                     "caseSensitive": true,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "inicio"
+                }
               }
             ]
           }
         },
         "position": [
-          -1180,
+          -1184,
           0
         ],
         "type": "n8n-nodes-base.switch",
@@ -520,13 +571,12 @@
         "name": "LLM - Clasificar intención del cliente",
         "parameters": {
           "hasOutputParser": true,
-          "options": {},
           "promptType": "define",
           "text": "=Eres el asistente de InmoLima. El cliente escribió este mensaje por WhatsApp:\n\n\"{{ $json.texto }}\"\n\nClasifica su intención en una de estas 4 categorías, considerando que también puede responder solo con el número de una opción de menú (1=comprar, 2=alquilar, 3=asesor):\n- comprar\n- alquilar\n- asesor\n- otro (si no se entiende o no aplica ninguna)"
         },
         "position": [
-          -900,
-          -600
+          -896,
+          -608
         ],
         "type": "@n8n/n8n-nodes-langchain.chainLlm",
         "typeVersion": 1.5
@@ -534,23 +584,19 @@
       {
         "credentials": {
           "deepSeekApi": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "DeepSeek - InmoLima"
+            "id": "TYvoosnvBBtdWbia",
+            "name": "DeepSeek account 2"
           }
         },
         "id": "lm-deepseek-clasificador",
         "name": "DeepSeek Chat Model - Clasificador",
         "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "list",
-            "value": "deepseek-chat"
-          },
+          "model": "deepseek-flash",
           "options": {}
         },
         "position": [
-          -1020,
-          -880
+          -896,
+          -384
         ],
         "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
         "typeVersion": 1
@@ -563,7 +609,7 @@
           "schemaType": "manual"
         },
         "position": [
-          -780,
+          -784,
           -880
         ],
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
@@ -576,8 +622,8 @@
           "jsCode": "const datos = $('Code - Fusionar sesión (o iniciar una nueva)').item.json;\nconst clasificacion = $input.item.json.output || $input.item.json;\n\nreturn [{\n  json: {\n    ...datos,\n    intencion: (clasificacion.intencion || 'otro').toLowerCase()\n  }\n}];"
         },
         "position": [
-          -660,
-          -600
+          -656,
+          -608
         ],
         "type": "n8n-nodes-base.code",
         "typeVersion": 2
@@ -585,8 +631,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-inicio",
@@ -597,6 +643,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Etapa": "esperando_opcion",
@@ -605,20 +723,23 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -900,
-          750
+          -896,
+          752
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -635,7 +756,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -643,8 +764,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          -660,
-          750
+          -656,
+          752
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -652,11 +773,9 @@
       {
         "id": "switch-opcion",
         "name": "Switch - Interpretar opción del menú",
-        "notes": "Clasificación hecha por el LLM (nodo 'LLM - Clasificar intención del cliente'), no por coincidencia exacta de texto. Salida 'extra' (índice 2) = el LLM devolvió 'otro' -> se reenvía el menú.",
+        "notes": "Clasificación hecha por el LLM. Salida 2 (índice 2) = el LLM devolvió 'otro' -> se reenvía el menú.",
         "notesInFlow": true,
         "parameters": {
-          "fallbackOutput": "extra",
-          "mode": "rules",
           "options": {},
           "rules": {
             "values": [
@@ -676,10 +795,10 @@
                   "options": {
                     "caseSensitive": false,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "asesor"
+                }
               },
               {
                 "conditions": {
@@ -705,17 +824,38 @@
                   "options": {
                     "caseSensitive": false,
                     "leftValue": "",
-                    "typeValidation": "loose"
+                    "typeValidation": "loose",
+                    "version": 1
                   }
-                },
-                "outputKey": "lead"
+                }
+              },
+              {
+                "conditions": {
+                  "combinator": "and",
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.intencion }}",
+                      "operator": {
+                        "operation": "equals",
+                        "type": "string"
+                      },
+                      "rightValue": "otro"
+                    }
+                  ],
+                  "options": {
+                    "caseSensitive": false,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 1
+                  }
+                }
               }
             ]
           }
         },
         "position": [
-          -420,
-          -600
+          -416,
+          -608
         ],
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.2
@@ -723,8 +863,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-cerrado",
@@ -735,6 +875,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Etapa": "cerrado",
@@ -743,20 +955,24 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=0",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -180,
-          -750
+          -176,
+          -832
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -764,8 +980,8 @@
       {
         "credentials": {
           "slackApi": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Slack - InmoLima"
+            "id": "0P4ZiIdlt8CYr4vJ",
+            "name": "Slack account 2"
           }
         },
         "id": "slack-asesor",
@@ -773,18 +989,16 @@
         "parameters": {
           "channelId": {
             "__rl": true,
-            "mode": "list",
+            "mode": "name",
             "value": "comercial-inmolima"
           },
-          "operation": "post",
           "otherOptions": {},
-          "resource": "message",
           "select": "channel",
-          "text": "=🔔 *Cliente pide asesor humano*\nTeléfono: {{ $json.telefono }}\nNombre WhatsApp: {{ $json.nombre_whatsapp }}"
+          "text": "=🔔 *Cliente pide asesor humano*\nTeléfono: {{ $('Code - Combinar intención con datos del turno').item.json.telefono }}\nNombre WhatsApp: {{ $('Code - Combinar intención con datos del turno').item.json.nombre_whatsapp }}"
         },
         "position": [
-          60,
-          -750
+          64,
+          -816
         ],
         "type": "n8n-nodes-base.slack",
         "typeVersion": 2.2,
@@ -802,7 +1016,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"¡Gracias! En breve un asesor de InmoLima se comunicará contigo por este mismo WhatsApp.\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"¡Gracias! En breve un asesor de InmoLima se comunicará contigo por este mismo WhatsApp.\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -810,8 +1024,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          300,
-          -750
+          304,
+          -752
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -819,8 +1033,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-interes",
@@ -831,6 +1045,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Etapa": "esperando_nombre",
@@ -840,20 +1126,23 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -180,
-          -600
+          -176,
+          -608
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -870,7 +1159,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Perfecto, cuéntame: ¿cuál es tu nombre completo?\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Perfecto, cuéntame: ¿cuál es tu nombre completo?\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -878,8 +1167,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          60,
-          -600
+          64,
+          -608
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -896,7 +1185,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -904,8 +1193,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          -180,
-          -450
+          -176,
+          -448
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -913,8 +1202,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-nombre",
@@ -925,6 +1214,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Etapa": "esperando_presupuesto",
@@ -934,20 +1295,23 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -900,
-          -150
+          -896,
+          -144
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -964,7 +1328,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias \" + $json.texto + \". ¿Cuál es tu presupuesto aproximado?\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias \" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto + \". ¿Cuál es tu presupuesto aproximado?\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -972,8 +1336,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          -660,
-          -150
+          -656,
+          -144
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -981,8 +1345,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-presupuesto",
@@ -993,6 +1357,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Etapa": "esperando_distrito",
@@ -1002,20 +1438,23 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -900,
-          150
+          -896,
+          160
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -1032,7 +1471,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Última pregunta: ¿en qué distrito te interesa?\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Última pregunta: ¿en qué distrito te interesa?\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -1040,8 +1479,8 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          -660,
-          150
+          -656,
+          160
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
@@ -1049,8 +1488,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-upsert-distrito",
@@ -1061,6 +1500,78 @@
             "matchingColumns": [
               "Telefono"
             ],
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Etapa",
+                "id": "Etapa",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Actualizado",
+                "id": "Actualizado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
               "Actualizado": "={{ $now.toISO() }}",
               "Distrito": "={{ $json.texto }}",
@@ -1070,20 +1581,23 @@
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "appendOrUpdate",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Sesiones",
             "mode": "list",
-            "value": "Sesiones"
+            "value": "gid=0"
           }
         },
         "position": [
-          -900,
-          450
+          -896,
+          464
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -1091,8 +1605,8 @@
       {
         "credentials": {
           "googleSheetsOAuth2Api": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Google Sheets - InmoLima"
+            "id": "MQYiw7judWERymdo",
+            "name": "Google Sheets account 13"
           }
         },
         "id": "sheets-append-lead",
@@ -1100,32 +1614,108 @@
         "parameters": {
           "columns": {
             "mappingMode": "defineBelow",
+            "schema": [
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": true,
+                "display": true,
+                "displayName": "Fecha",
+                "id": "Fecha",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Nombre",
+                "id": "Nombre",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Telefono",
+                "id": "Telefono",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Interes",
+                "id": "Interes",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Presupuesto",
+                "id": "Presupuesto",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Distrito",
+                "id": "Distrito",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              },
+              {
+                "canBeUsedToMatch": true,
+                "defaultMatch": false,
+                "display": true,
+                "displayName": "Estado",
+                "id": "Estado",
+                "removed": false,
+                "required": false,
+                "type": "string"
+              }
+            ],
             "value": {
-              "Distrito": "={{ $json.texto }}",
+              "Distrito": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto }}",
               "Estado": "Calificado",
               "Fecha": "={{ $now.toISO() }}",
-              "Interes": "={{ $('Google Sheets - Guardar interés').item.json.Interes }}",
-              "Nombre": "={{ $('Google Sheets - Guardar nombre').item.json.Nombre }}",
-              "Presupuesto": "={{ $('Google Sheets - Guardar presupuesto').item.json.Presupuesto }}",
-              "Telefono": "={{ $json.telefono }}"
+              "Interes": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.interes }}",
+              "Nombre": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.nombre }}",
+              "Presupuesto": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.presupuesto }}",
+              "Telefono": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono }}"
             }
           },
           "documentId": {
             "__rl": true,
+            "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
             "mode": "list",
-            "value": "CAMBIAR_ID_SPREADSHEET"
+            "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
           },
           "operation": "append",
           "options": {},
           "sheetName": {
             "__rl": true,
+            "cachedResultName": "Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=72561019",
             "mode": "list",
-            "value": "Leads"
+            "value": 72561019
           }
         },
         "position": [
-          -660,
-          450
+          -656,
+          464
         ],
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5
@@ -1133,8 +1723,8 @@
       {
         "credentials": {
           "slackApi": {
-            "id": "CAMBIAR_ID_CREDENCIAL",
-            "name": "Slack - InmoLima"
+            "id": "0P4ZiIdlt8CYr4vJ",
+            "name": "Slack account 2"
           }
         },
         "id": "slack-nuevo-lead",
@@ -1142,18 +1732,16 @@
         "parameters": {
           "channelId": {
             "__rl": true,
-            "mode": "list",
+            "mode": "name",
             "value": "comercial-inmolima"
           },
-          "operation": "post",
           "otherOptions": {},
-          "resource": "message",
           "select": "channel",
-          "text": "=✅ *Nuevo lead calificado*\n{{ $('Google Sheets - Guardar nombre').item.json.Nombre }} | {{ $json.telefono }}\nInterés: {{ $('Google Sheets - Guardar interés').item.json.Interes }} | Presupuesto: {{ $('Google Sheets - Guardar presupuesto').item.json.Presupuesto }} | Distrito: {{ $json.texto }}"
+          "text": "=✅ *Nuevo lead calificado*\n{{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.nombre }} | {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono }}\nInterés: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.interes }} | Presupuesto: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.presupuesto }} | Distrito: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto }}"
         },
         "position": [
-          -420,
-          450
+          -416,
+          464
         ],
         "type": "n8n-nodes-base.slack",
         "typeVersion": 2.2,
@@ -1171,7 +1759,7 @@
         "parameters": {
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
-          "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias, tu información fue registrada ✅. Un asesor te escribirá pronto con opciones en \" + $json.texto + \".\" } } }}",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias, tu información fue registrada ✅. Un asesor te escribirá pronto con opciones en \" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto + \".\" } } }}",
           "method": "POST",
           "options": {},
           "sendBody": true,
@@ -1179,18 +1767,195 @@
           "url": "https://api.ycloud.com/v2/whatsapp/messages"
         },
         "position": [
-          -180,
+          -176,
+          464
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "if-valida-nombre",
+        "name": "IF - ¿Parece un nombre válido?",
+        "notes": "Un nombre real casi nunca trae números. Si el texto trae dígitos, probablemente el usuario contestó otra cosa (ej. su presupuesto) antes de que le llegara esta pregunta.",
+        "notesInFlow": true,
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.texto }}",
+                "operator": {
+                  "operation": "notRegex",
+                  "type": "string"
+                },
+                "rightValue": "\\d"
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          -780,
+          -150
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "T0XdEfo6SPOPAxLj",
+            "name": "YCloud API Key"
+          }
+        },
+        "id": "http-reintentar-nombre",
+        "name": "HTTP Request - Reintentar pregunta de nombre",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender tu nombre. ¿Puedes escribir solo tu nombre completo?\" } } }}",
+          "method": "POST",
+          "options": {},
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "https://api.ycloud.com/v2/whatsapp/messages"
+        },
+        "position": [
+          -660,
+          -50
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "if-valida-presupuesto",
+        "name": "IF - ¿Parece un presupuesto válido?",
+        "notes": "Un presupuesto normalmente trae al menos un número. Si el texto no trae dígitos, probablemente el usuario contestó otra cosa antes de que le llegara esta pregunta.",
+        "notesInFlow": true,
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.texto }}",
+                "operator": {
+                  "operation": "regex",
+                  "type": "string"
+                },
+                "rightValue": "\\d"
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          -780,
+          150
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "T0XdEfo6SPOPAxLj",
+            "name": "YCloud API Key"
+          }
+        },
+        "id": "http-reintentar-presupuesto",
+        "name": "HTTP Request - Reintentar pregunta de presupuesto",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender tu presupuesto. ¿Puedes indicarme un monto aproximado?\" } } }}",
+          "method": "POST",
+          "options": {},
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "https://api.ycloud.com/v2/whatsapp/messages"
+        },
+        "position": [
+          -660,
+          250
+        ],
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2
+      },
+      {
+        "id": "if-valida-distrito",
+        "name": "IF - ¿Parece un distrito válido?",
+        "notes": "Un distrito debería traer al menos una letra (no ser solo números).",
+        "notesInFlow": true,
+        "parameters": {
+          "conditions": {
+            "combinator": "and",
+            "conditions": [
+              {
+                "leftValue": "={{ $json.texto }}",
+                "operator": {
+                  "operation": "regex",
+                  "type": "string"
+                },
+                "rightValue": "[a-zA-ZÀ-ÿ]"
+              }
+            ],
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            }
+          },
+          "options": {}
+        },
+        "position": [
+          -1020,
           450
+        ],
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2
+      },
+      {
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "T0XdEfo6SPOPAxLj",
+            "name": "YCloud API Key"
+          }
+        },
+        "id": "http-reintentar-distrito",
+        "name": "HTTP Request - Reintentar pregunta de distrito",
+        "parameters": {
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender el distrito. ¿Puedes indicarme en qué distrito te interesa?\" } } }}",
+          "method": "POST",
+          "options": {},
+          "sendBody": true,
+          "specifyBody": "json",
+          "url": "https://api.ycloud.com/v2/whatsapp/messages"
+        },
+        "position": [
+          -1020,
+          550
         ],
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2
       }
     ],
-    "updatedAt": "2026-09-19T03:39:13.523Z",
-    "versionId": "21ad5a49-8aba-446f-8937-1ddd715a49fb",
+    "updatedAt": "2026-09-19T05:08:23.888Z",
+    "versionId": "e23e6741-75f1-408a-8dab-89df7caa1616",
     "workflowId": "M6ZUO1kpC921T2bq"
   },
-  "activeVersionId": "21ad5a49-8aba-446f-8937-1ddd715a49fb",
+  "activeVersionId": "e23e6741-75f1-408a-8dab-89df7caa1616",
   "connections": {
     "Code - Combinar intención con datos del turno": {
       "main": [
@@ -1313,6 +2078,60 @@
         ]
       ]
     },
+    "IF - ¿Parece un distrito válido?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Google Sheets - Guardar distrito (sesión completa)",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request - Reintentar pregunta de distrito",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "IF - ¿Parece un nombre válido?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Google Sheets - Guardar nombre",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request - Reintentar pregunta de nombre",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "IF - ¿Parece un presupuesto válido?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Google Sheets - Guardar presupuesto",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "HTTP Request - Reintentar pregunta de presupuesto",
+            "type": "main"
+          }
+        ]
+      ]
+    },
     "LLM - Clasificar intención del cliente": {
       "main": [
         [
@@ -1405,21 +2224,21 @@
         [
           {
             "index": 0,
-            "node": "Google Sheets - Guardar nombre",
+            "node": "IF - ¿Parece un nombre válido?",
             "type": "main"
           }
         ],
         [
           {
             "index": 0,
-            "node": "Google Sheets - Guardar presupuesto",
+            "node": "IF - ¿Parece un presupuesto válido?",
             "type": "main"
           }
         ],
         [
           {
             "index": 0,
-            "node": "Google Sheets - Guardar distrito (sesión completa)",
+            "node": "IF - ¿Parece un distrito válido?",
             "type": "main"
           }
         ],
@@ -1463,7 +2282,7 @@
         "width": 480
       },
       "position": [
-        -2300,
+        -2304,
         -1200
       ],
       "type": "n8n-nodes-base.stickyNote",
@@ -1475,11 +2294,10 @@
       "parameters": {
         "httpMethod": "POST",
         "options": {},
-        "path": "whatsapp-inbound-inmolima",
-        "responseMode": "onReceived"
+        "path": "whatsapp-inbound-inmolima"
       },
       "position": [
-        -2300,
+        -2304,
         0
       ],
       "type": "n8n-nodes-base.webhook",
@@ -1496,33 +2314,32 @@
               "id": "1",
               "name": "telefono",
               "type": "string",
-              "value": "={{ $json.body.from }}"
+              "value": "={{ ($json.body.whatsappInboundMessage.from || $json.body.whatsappInboundMessage.fromUserId).replace(/[^0-9]/g, '') }}"
             },
             {
               "id": "2",
               "name": "nombre_whatsapp",
               "type": "string",
-              "value": "={{ $json.body.name }}"
+              "value": "={{ $json.body.whatsappInboundMessage.customerProfile.name }}"
             },
             {
               "id": "3",
               "name": "texto",
               "type": "string",
-              "value": "={{ $json.body.text.body }}"
+              "value": "={{ $json.body.whatsappInboundMessage.text.body }}"
             },
             {
               "id": "4",
               "name": "texto_normalizado",
               "type": "string",
-              "value": "={{ ($json.body.text.body || '').toLowerCase().trim() }}"
+              "value": "={{ ($json.body.whatsappInboundMessage.text.body || '').toLowerCase().trim() }}"
             }
           ]
         },
-        "mode": "manual",
         "options": {}
       },
       "position": [
-        -2020,
+        -2016,
         0
       ],
       "type": "n8n-nodes-base.set",
@@ -1532,8 +2349,8 @@
       "alwaysOutputData": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-buscar-sesion",
@@ -1541,8 +2358,10 @@
       "parameters": {
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "filtersUI": {
           "values": [
@@ -1552,18 +2371,17 @@
             }
           ]
         },
-        "operation": "read",
-        "options": {
-          "returnAllMatches": "first"
-        },
+        "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=0",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -1740,
+        -1744,
         0
       ],
       "type": "n8n-nodes-base.googleSheets",
@@ -1576,7 +2394,7 @@
         "jsCode": "const original = $('Set - Normalizar datos del mensaje').item.json;\nconst sesion = $input.item.json || {};\n\nreturn [{\n  json: {\n    telefono: original.telefono,\n    nombre_whatsapp: original.nombre_whatsapp,\n    texto: original.texto,\n    texto_normalizado: original.texto_normalizado,\n    etapa: sesion.Etapa || 'inicio',\n    nombre: sesion.Nombre || '',\n    interes: sesion.Interes || '',\n    presupuesto: sesion.Presupuesto || '',\n    distrito: sesion.Distrito || ''\n  }\n}];"
       },
       "position": [
-        -1460,
+        -1456,
         0
       ],
       "type": "n8n-nodes-base.code",
@@ -1588,8 +2406,6 @@
       "notes": "Salida 4 (índice 4) = conversación nueva ('inicio', valor por defecto que pone el Code node anterior cuando no hay sesión previa).",
       "notesInFlow": true,
       "parameters": {
-        "fallbackOutput": "none",
-        "mode": "rules",
         "options": {},
         "rules": {
           "values": [
@@ -1609,10 +2425,10 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "esperando_opcion"
+              }
             },
             {
               "conditions": {
@@ -1630,10 +2446,10 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "esperando_nombre"
+              }
             },
             {
               "conditions": {
@@ -1651,10 +2467,10 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "esperando_presupuesto"
+              }
             },
             {
               "conditions": {
@@ -1672,10 +2488,10 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "esperando_distrito"
+              }
             },
             {
               "conditions": {
@@ -1693,16 +2509,16 @@
                 "options": {
                   "caseSensitive": true,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "inicio"
+              }
             }
           ]
         }
       },
       "position": [
-        -1180,
+        -1184,
         0
       ],
       "type": "n8n-nodes-base.switch",
@@ -1713,13 +2529,12 @@
       "name": "LLM - Clasificar intención del cliente",
       "parameters": {
         "hasOutputParser": true,
-        "options": {},
         "promptType": "define",
         "text": "=Eres el asistente de InmoLima. El cliente escribió este mensaje por WhatsApp:\n\n\"{{ $json.texto }}\"\n\nClasifica su intención en una de estas 4 categorías, considerando que también puede responder solo con el número de una opción de menú (1=comprar, 2=alquilar, 3=asesor):\n- comprar\n- alquilar\n- asesor\n- otro (si no se entiende o no aplica ninguna)"
       },
       "position": [
-        -900,
-        -600
+        -896,
+        -608
       ],
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.5
@@ -1727,23 +2542,19 @@
     {
       "credentials": {
         "deepSeekApi": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "DeepSeek - InmoLima"
+          "id": "TYvoosnvBBtdWbia",
+          "name": "DeepSeek account 2"
         }
       },
       "id": "lm-deepseek-clasificador",
       "name": "DeepSeek Chat Model - Clasificador",
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "list",
-          "value": "deepseek-chat"
-        },
+        "model": "deepseek-flash",
         "options": {}
       },
       "position": [
-        -1020,
-        -880
+        -896,
+        -384
       ],
       "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
       "typeVersion": 1
@@ -1756,7 +2567,7 @@
         "schemaType": "manual"
       },
       "position": [
-        -780,
+        -784,
         -880
       ],
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
@@ -1769,8 +2580,8 @@
         "jsCode": "const datos = $('Code - Fusionar sesión (o iniciar una nueva)').item.json;\nconst clasificacion = $input.item.json.output || $input.item.json;\n\nreturn [{\n  json: {\n    ...datos,\n    intencion: (clasificacion.intencion || 'otro').toLowerCase()\n  }\n}];"
       },
       "position": [
-        -660,
-        -600
+        -656,
+        -608
       ],
       "type": "n8n-nodes-base.code",
       "typeVersion": 2
@@ -1778,8 +2589,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-inicio",
@@ -1790,6 +2601,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Etapa": "esperando_opcion",
@@ -1798,20 +2681,23 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -900,
-        750
+        -896,
+        752
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -1828,7 +2714,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -1836,8 +2722,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        -660,
-        750
+        -656,
+        752
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -1845,11 +2731,9 @@
     {
       "id": "switch-opcion",
       "name": "Switch - Interpretar opción del menú",
-      "notes": "Clasificación hecha por el LLM (nodo 'LLM - Clasificar intención del cliente'), no por coincidencia exacta de texto. Salida 'extra' (índice 2) = el LLM devolvió 'otro' -> se reenvía el menú.",
+      "notes": "Clasificación hecha por el LLM. Salida 2 (índice 2) = el LLM devolvió 'otro' -> se reenvía el menú.",
       "notesInFlow": true,
       "parameters": {
-        "fallbackOutput": "extra",
-        "mode": "rules",
         "options": {},
         "rules": {
           "values": [
@@ -1869,10 +2753,10 @@
                 "options": {
                   "caseSensitive": false,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "asesor"
+              }
             },
             {
               "conditions": {
@@ -1898,17 +2782,38 @@
                 "options": {
                   "caseSensitive": false,
                   "leftValue": "",
-                  "typeValidation": "loose"
+                  "typeValidation": "loose",
+                  "version": 1
                 }
-              },
-              "outputKey": "lead"
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.intencion }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "otro"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                }
+              }
             }
           ]
         }
       },
       "position": [
-        -420,
-        -600
+        -416,
+        -608
       ],
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2
@@ -1916,8 +2821,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-cerrado",
@@ -1928,6 +2833,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Etapa": "cerrado",
@@ -1936,20 +2913,24 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=0",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -180,
-        -750
+        -176,
+        -832
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -1957,8 +2938,8 @@
     {
       "credentials": {
         "slackApi": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Slack - InmoLima"
+          "id": "0P4ZiIdlt8CYr4vJ",
+          "name": "Slack account 2"
         }
       },
       "id": "slack-asesor",
@@ -1966,18 +2947,16 @@
       "parameters": {
         "channelId": {
           "__rl": true,
-          "mode": "list",
+          "mode": "name",
           "value": "comercial-inmolima"
         },
-        "operation": "post",
         "otherOptions": {},
-        "resource": "message",
         "select": "channel",
-        "text": "=🔔 *Cliente pide asesor humano*\nTeléfono: {{ $json.telefono }}\nNombre WhatsApp: {{ $json.nombre_whatsapp }}"
+        "text": "=🔔 *Cliente pide asesor humano*\nTeléfono: {{ $('Code - Combinar intención con datos del turno').item.json.telefono }}\nNombre WhatsApp: {{ $('Code - Combinar intención con datos del turno').item.json.nombre_whatsapp }}"
       },
       "position": [
-        60,
-        -750
+        64,
+        -816
       ],
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.2,
@@ -1995,7 +2974,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"¡Gracias! En breve un asesor de InmoLima se comunicará contigo por este mismo WhatsApp.\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"¡Gracias! En breve un asesor de InmoLima se comunicará contigo por este mismo WhatsApp.\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2003,8 +2982,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        300,
-        -750
+        304,
+        -752
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2012,8 +2991,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-interes",
@@ -2024,6 +3003,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Etapa": "esperando_nombre",
@@ -2033,20 +3084,23 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -180,
-        -600
+        -176,
+        -608
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -2063,7 +3117,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Perfecto, cuéntame: ¿cuál es tu nombre completo?\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Perfecto, cuéntame: ¿cuál es tu nombre completo?\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2071,8 +3125,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        60,
-        -600
+        64,
+        -608
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2089,7 +3143,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Combinar intención con datos del turno').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Hola 👋 Soy el asistente de InmoLima. Escribe el número de tu opción:\\n1. Comprar propiedad\\n2. Alquilar propiedad\\n3. Hablar con un asesor\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2097,8 +3151,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        -180,
-        -450
+        -176,
+        -448
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2106,8 +3160,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-nombre",
@@ -2118,6 +3172,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Etapa": "esperando_presupuesto",
@@ -2127,20 +3253,23 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -900,
-        -150
+        -896,
+        -144
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -2157,7 +3286,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias \" + $json.texto + \". ¿Cuál es tu presupuesto aproximado?\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias \" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto + \". ¿Cuál es tu presupuesto aproximado?\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2165,8 +3294,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        -660,
-        -150
+        -656,
+        -144
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2174,8 +3303,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-presupuesto",
@@ -2186,6 +3315,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Etapa": "esperando_distrito",
@@ -2195,20 +3396,23 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -900,
-        150
+        -896,
+        160
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -2225,7 +3429,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Última pregunta: ¿en qué distrito te interesa?\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Última pregunta: ¿en qué distrito te interesa?\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2233,8 +3437,8 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        -660,
-        150
+        -656,
+        160
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2242,8 +3446,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-upsert-distrito",
@@ -2254,6 +3458,78 @@
           "matchingColumns": [
             "Telefono"
           ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Etapa",
+              "id": "Etapa",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Actualizado",
+              "id": "Actualizado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
             "Actualizado": "={{ $now.toISO() }}",
             "Distrito": "={{ $json.texto }}",
@@ -2263,20 +3539,23 @@
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "appendOrUpdate",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Sesiones",
           "mode": "list",
-          "value": "Sesiones"
+          "value": "gid=0"
         }
       },
       "position": [
-        -900,
-        450
+        -896,
+        464
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -2284,8 +3563,8 @@
     {
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Google Sheets - InmoLima"
+          "id": "MQYiw7judWERymdo",
+          "name": "Google Sheets account 13"
         }
       },
       "id": "sheets-append-lead",
@@ -2293,32 +3572,108 @@
       "parameters": {
         "columns": {
           "mappingMode": "defineBelow",
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": true,
+              "display": true,
+              "displayName": "Fecha",
+              "id": "Fecha",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Nombre",
+              "id": "Nombre",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Telefono",
+              "id": "Telefono",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Interes",
+              "id": "Interes",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Presupuesto",
+              "id": "Presupuesto",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Distrito",
+              "id": "Distrito",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "Estado",
+              "id": "Estado",
+              "removed": false,
+              "required": false,
+              "type": "string"
+            }
+          ],
           "value": {
-            "Distrito": "={{ $json.texto }}",
+            "Distrito": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto }}",
             "Estado": "Calificado",
             "Fecha": "={{ $now.toISO() }}",
-            "Interes": "={{ $('Google Sheets - Guardar interés').item.json.Interes }}",
-            "Nombre": "={{ $('Google Sheets - Guardar nombre').item.json.Nombre }}",
-            "Presupuesto": "={{ $('Google Sheets - Guardar presupuesto').item.json.Presupuesto }}",
-            "Telefono": "={{ $json.telefono }}"
+            "Interes": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.interes }}",
+            "Nombre": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.nombre }}",
+            "Presupuesto": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.presupuesto }}",
+            "Telefono": "={{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono }}"
           }
         },
         "documentId": {
           "__rl": true,
+          "cachedResultName": "S3-W1 - Generación y calificación de leads por WhatsApp (InmoLima)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit?usp=drivesdk",
           "mode": "list",
-          "value": "CAMBIAR_ID_SPREADSHEET"
+          "value": "1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10"
         },
         "operation": "append",
         "options": {},
         "sheetName": {
           "__rl": true,
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cLNtsIlfKy1yCMnSd31K1un5WefO8WrzTbMyNpdrf10/edit#gid=72561019",
           "mode": "list",
-          "value": "Leads"
+          "value": 72561019
         }
       },
       "position": [
-        -660,
-        450
+        -656,
+        464
       ],
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5
@@ -2326,8 +3681,8 @@
     {
       "credentials": {
         "slackApi": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "Slack - InmoLima"
+          "id": "0P4ZiIdlt8CYr4vJ",
+          "name": "Slack account 2"
         }
       },
       "id": "slack-nuevo-lead",
@@ -2335,18 +3690,16 @@
       "parameters": {
         "channelId": {
           "__rl": true,
-          "mode": "list",
+          "mode": "name",
           "value": "comercial-inmolima"
         },
-        "operation": "post",
         "otherOptions": {},
-        "resource": "message",
         "select": "channel",
-        "text": "=✅ *Nuevo lead calificado*\n{{ $('Google Sheets - Guardar nombre').item.json.Nombre }} | {{ $json.telefono }}\nInterés: {{ $('Google Sheets - Guardar interés').item.json.Interes }} | Presupuesto: {{ $('Google Sheets - Guardar presupuesto').item.json.Presupuesto }} | Distrito: {{ $json.texto }}"
+        "text": "=✅ *Nuevo lead calificado*\n{{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.nombre }} | {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono }}\nInterés: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.interes }} | Presupuesto: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.presupuesto }} | Distrito: {{ $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto }}"
       },
       "position": [
-        -420,
-        450
+        -416,
+        464
       ],
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.2,
@@ -2364,7 +3717,7 @@
       "parameters": {
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
-        "jsonBody": "={{ { \"from\": \"+51999000000\", \"to\": $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias, tu información fue registrada ✅. Un asesor te escribirá pronto con opciones en \" + $json.texto + \".\" } } }}",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Gracias, tu información fue registrada ✅. Un asesor te escribirá pronto con opciones en \" + $('Code - Fusionar sesión (o iniciar una nueva)').item.json.texto + \".\" } } }}",
         "method": "POST",
         "options": {},
         "sendBody": true,
@@ -2372,8 +3725,185 @@
         "url": "https://api.ycloud.com/v2/whatsapp/messages"
       },
       "position": [
-        -180,
+        -176,
+        464
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "if-valida-nombre",
+      "name": "IF - ¿Parece un nombre válido?",
+      "notes": "Un nombre real casi nunca trae números. Si el texto trae dígitos, probablemente el usuario contestó otra cosa (ej. su presupuesto) antes de que le llegara esta pregunta.",
+      "notesInFlow": true,
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.texto }}",
+              "operator": {
+                "operation": "notRegex",
+                "type": "string"
+              },
+              "rightValue": "\\d"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        -780,
+        -150
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "T0XdEfo6SPOPAxLj",
+          "name": "YCloud API Key"
+        }
+      },
+      "id": "http-reintentar-nombre",
+      "name": "HTTP Request - Reintentar pregunta de nombre",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender tu nombre. ¿Puedes escribir solo tu nombre completo?\" } } }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.ycloud.com/v2/whatsapp/messages"
+      },
+      "position": [
+        -660,
+        -50
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "if-valida-presupuesto",
+      "name": "IF - ¿Parece un presupuesto válido?",
+      "notes": "Un presupuesto normalmente trae al menos un número. Si el texto no trae dígitos, probablemente el usuario contestó otra cosa antes de que le llegara esta pregunta.",
+      "notesInFlow": true,
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.texto }}",
+              "operator": {
+                "operation": "regex",
+                "type": "string"
+              },
+              "rightValue": "\\d"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        -780,
+        150
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "T0XdEfo6SPOPAxLj",
+          "name": "YCloud API Key"
+        }
+      },
+      "id": "http-reintentar-presupuesto",
+      "name": "HTTP Request - Reintentar pregunta de presupuesto",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender tu presupuesto. ¿Puedes indicarme un monto aproximado?\" } } }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.ycloud.com/v2/whatsapp/messages"
+      },
+      "position": [
+        -660,
+        250
+      ],
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2
+    },
+    {
+      "id": "if-valida-distrito",
+      "name": "IF - ¿Parece un distrito válido?",
+      "notes": "Un distrito debería traer al menos una letra (no ser solo números).",
+      "notesInFlow": true,
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.texto }}",
+              "operator": {
+                "operation": "regex",
+                "type": "string"
+              },
+              "rightValue": "[a-zA-ZÀ-ÿ]"
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          }
+        },
+        "options": {}
+      },
+      "position": [
+        -1020,
         450
+      ],
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2
+    },
+    {
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "T0XdEfo6SPOPAxLj",
+          "name": "YCloud API Key"
+        }
+      },
+      "id": "http-reintentar-distrito",
+      "name": "HTTP Request - Reintentar pregunta de distrito",
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "jsonBody": "={{ { \"from\": \"+51947535428\", \"to\": \"+\" + $json.telefono, \"type\": \"text\", \"text\": { \"body\": \"Disculpa, no logré entender el distrito. ¿Puedes indicarme en qué distrito te interesa?\" } } }}",
+        "method": "POST",
+        "options": {},
+        "sendBody": true,
+        "specifyBody": "json",
+        "url": "https://api.ycloud.com/v2/whatsapp/messages"
+      },
+      "position": [
+        -1020,
+        550
       ],
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2
@@ -2388,7 +3918,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-09-19T03:39:13.521Z",
-  "versionCounter": 76,
-  "versionId": "21ad5a49-8aba-446f-8937-1ddd715a49fb"
+  "updatedAt": "2026-09-19T05:08:23.885Z",
+  "versionCounter": 106,
+  "versionId": "e23e6741-75f1-408a-8dab-89df7caa1616"
 }
