@@ -1,0 +1,47 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {},
+  "createdAt": "2026-09-19T14:15:24.923Z",
+  "description": null,
+  "id": "4loQaYS9SB9axRgS",
+  "isArchived": false,
+  "meta": null,
+  "name": "S3_W3",
+  "nodeGroups": [],
+  "nodes": [],
+  "pinData": {},
+  "settings": {
+    "availableInMCP": false,
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-19T14:15:24.925Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-19T14:15:24.925Z",
+      "workflowId": "4loQaYS9SB9axRgS"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-19T14:15:24.923Z",
+  "versionCounter": 1,
+  "versionId": "ced17ac3-e463-4996-9317-5acfe471251d"
+}

@@ -1,0 +1,385 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Chat Trigger - Preguntar al RAG": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Chain - Responder con RAG",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "DeepSeek Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "Chain - Responder con RAG",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Default Data Loader - Extraer texto": {
+      "ai_document": [
+        [
+          {
+            "index": 0,
+            "node": "Qdrant Vector Store - Guardar documento",
+            "type": "ai_document"
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "index": 0,
+            "node": "Qdrant Vector Store - Guardar documento",
+            "type": "ai_embedding"
+          },
+          {
+            "index": 0,
+            "node": "Qdrant Vector Store - Buscar contexto",
+            "type": "ai_embedding"
+          }
+        ]
+      ]
+    },
+    "Google Drive - Descargar archivo": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Qdrant Vector Store - Guardar documento",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger - Nuevo archivo": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Google Drive - Descargar archivo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store - Buscar contexto": {
+      "ai_vectorStore": [
+        [
+          {
+            "index": 0,
+            "node": "Retriever - Vector Store",
+            "type": "ai_vectorStore"
+          }
+        ]
+      ]
+    },
+    "Retriever - Vector Store": {
+      "ai_retriever": [
+        [
+          {
+            "index": 0,
+            "node": "Chain - Responder con RAG",
+            "type": "ai_retriever"
+          }
+        ]
+      ]
+    },
+    "Text Splitter - Trocear en chunks": {
+      "ai_textSplitter": [
+        [
+          {
+            "index": 0,
+            "node": "Default Data Loader - Extraer texto",
+            "type": "ai_textSplitter"
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-19T01:21:55.058Z",
+  "description": null,
+  "id": "J355P6e7KCztNeYU",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "S3-W2 - RAG básico: Drive a Qdrant y chat en n8n",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "id": "sticky-intro",
+      "name": "Nota - Cómo usar este flujo",
+      "parameters": {
+        "content": "## RAG súper básico: Drive + Chat\nDos partes independientes, sin WhatsApp ni Sheets, para entender el mínimo necesario de un RAG en n8n:\n\n**Arriba (ingesta):** cuando subes un archivo nuevo a una carpeta de Google Drive, n8n lo descarga, lo trocea, genera embeddings y lo guarda en Qdrant.\n\n**Abajo (chat):** usa el panel de chat de n8n (botón \"Chat\" en el editor) para hacerle preguntas. El flujo busca en Qdrant los fragmentos más parecidos a tu pregunta y un LLM (DeepSeek) redacta la respuesta usando esa información — eso es RAG.\n\nNo necesitas activar el workflow para probar el chat: el nodo Chat Trigger tiene su propio botón de prueba en el editor.",
+        "height": 320,
+        "width": 460
+      },
+      "position": [
+        -1296,
+        -256
+      ],
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "aQwSjAiI68URRVZo",
+          "name": "Google Drive account 11"
+        }
+      },
+      "id": "drive-trigger",
+      "name": "Google Drive Trigger - Nuevo archivo",
+      "parameters": {
+        "event": "fileCreated",
+        "folderToWatch": {
+          "__rl": true,
+          "cachedResultName": "Documentos",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ssNQ2BY_AfEouT_nnNBCGfhBEbeSsxpN",
+          "mode": "list",
+          "value": "1ssNQ2BY_AfEouT_nnNBCGfhBEbeSsxpN"
+        },
+        "options": {},
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder"
+      },
+      "position": [
+        -1296,
+        144
+      ],
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "aQwSjAiI68URRVZo",
+          "name": "Google Drive account 11"
+        }
+      },
+      "id": "drive-download",
+      "name": "Google Drive - Descargar archivo",
+      "parameters": {
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "operation": "download",
+        "options": {}
+      },
+      "position": [
+        -1056,
+        144
+      ],
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3
+    },
+    {
+      "credentials": {
+        "qdrantApi": {
+          "id": "FUJ48dvdg7IOFb1S",
+          "name": "Qdrant account"
+        }
+      },
+      "id": "qdrant-insert",
+      "name": "Qdrant Vector Store - Guardar documento",
+      "parameters": {
+        "mode": "insert",
+        "options": {},
+        "qdrantCollection": {
+          "__rl": true,
+          "cachedResultName": "base_conocimiento",
+          "mode": "list",
+          "value": "base_conocimiento"
+        }
+      },
+      "position": [
+        -816,
+        144
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.1
+    },
+    {
+      "id": "loader-documento",
+      "name": "Default Data Loader - Extraer texto",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -896,
+        352
+      ],
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1
+    },
+    {
+      "id": "splitter",
+      "name": "Text Splitter - Trocear en chunks",
+      "parameters": {
+        "chunkOverlap": 150,
+        "options": {}
+      },
+      "position": [
+        -1200,
+        480
+      ],
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1
+    },
+    {
+      "credentials": {
+        "openAiApi": {
+          "id": "CAMBIAR_ID_CREDENCIAL",
+          "name": "OpenAI"
+        }
+      },
+      "id": "embeddings",
+      "name": "Embeddings OpenAI",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -368,
+        560
+      ],
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2
+    },
+    {
+      "id": "chat-trigger",
+      "name": "Chat Trigger - Preguntar al RAG",
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -1328,
+        704
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "webhookId": "rag-basico-chat"
+    },
+    {
+      "id": "chain-rag",
+      "name": "Chain - Responder con RAG",
+      "notes": "Nodo 'Question and Answer Chain'. La pregunta la toma automáticamente del Chat Trigger (chatInput).",
+      "notesInFlow": true,
+      "parameters": {
+        "options": {}
+      },
+      "position": [
+        -960,
+        592
+      ],
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "typeVersion": 1.3
+    },
+    {
+      "credentials": {
+        "qdrantApi": {
+          "id": "FUJ48dvdg7IOFb1S",
+          "name": "Qdrant account"
+        }
+      },
+      "id": "qdrant-retrieve",
+      "name": "Qdrant Vector Store - Buscar contexto",
+      "parameters": {
+        "options": {},
+        "qdrantCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "base_conocimiento"
+        }
+      },
+      "position": [
+        -1184,
+        1120
+      ],
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.1
+    },
+    {
+      "credentials": {
+        "deepSeekApi": {
+          "id": "TYvoosnvBBtdWbia",
+          "name": "DeepSeek account 2"
+        }
+      },
+      "id": "deepseek-chat-model",
+      "name": "DeepSeek Chat Model",
+      "parameters": {
+        "model": "deepseek-flash",
+        "options": {}
+      },
+      "position": [
+        -496,
+        928
+      ],
+      "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+      "typeVersion": 1
+    },
+    {
+      "id": "retriever-vectorstore",
+      "name": "Retriever - Vector Store",
+      "parameters": {},
+      "position": [
+        -1136,
+        912
+      ],
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "typeVersion": 1
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "binaryMode": "separate",
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2026-09-19T01:21:55.061Z",
+      "project": {
+        "createdAt": "2026-08-31T16:19:50.387Z",
+        "creatorId": "03a05199-d5a0-412e-83a0-17abbe48ce3a",
+        "customTelemetryTags": [],
+        "description": null,
+        "icon": null,
+        "id": "1hl56bRIdzoo36vv",
+        "name": "Alejandro Munoz Zevallos <alejandrozevallos.218@gmail.com>",
+        "type": "personal",
+        "updatedAt": "2026-09-05T05:04:36.290Z"
+      },
+      "projectId": "1hl56bRIdzoo36vv",
+      "role": "workflow:owner",
+      "updatedAt": "2026-09-19T01:21:55.061Z",
+      "workflowId": "J355P6e7KCztNeYU"
+    }
+  ],
+  "sourceWorkflowId": null,
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-09-19T06:02:50.719Z",
+  "versionCounter": 42,
+  "versionId": "18aa1274-7610-4ba2-b50e-15c2bca4ba2b"
+}
