@@ -124,7 +124,7 @@
       "parameters": {
         "content": "## RAG súper básico: Drive + Chat\nDos partes independientes, sin WhatsApp ni Sheets, para entender el mínimo necesario de un RAG en n8n:\n\n**Arriba (ingesta):** cuando subes un archivo nuevo a una carpeta de Google Drive, n8n lo descarga, lo trocea, genera embeddings y lo guarda en Qdrant.\n\n**Abajo (chat):** usa el panel de chat de n8n (botón \"Chat\" en el editor) para hacerle preguntas. El flujo busca en Qdrant los fragmentos más parecidos a tu pregunta y un LLM (DeepSeek) redacta la respuesta usando esa información — eso es RAG.\n\nNo necesitas activar el workflow para probar el chat: el nodo Chat Trigger tiene su propio botón de prueba en el editor.",
         "height": 320,
-        "width": 460
+        "width": 684
       },
       "position": [
         -1296,
@@ -162,8 +162,8 @@
         "triggerOn": "specificFolder"
       },
       "position": [
-        -1296,
-        144
+        -1472,
+        176
       ],
       "type": "n8n-nodes-base.googleDriveTrigger",
       "typeVersion": 1
@@ -187,8 +187,8 @@
         "options": {}
       },
       "position": [
-        -1056,
-        144
+        -1232,
+        160
       ],
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3
@@ -226,8 +226,8 @@
         "options": {}
       },
       "position": [
-        -896,
-        352
+        -1008,
+        368
       ],
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1
@@ -240,8 +240,8 @@
         "options": {}
       },
       "position": [
-        -1200,
-        480
+        -1216,
+        464
       ],
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1
@@ -249,8 +249,8 @@
     {
       "credentials": {
         "openAiApi": {
-          "id": "CAMBIAR_ID_CREDENCIAL",
-          "name": "OpenAI"
+          "id": "vHi45yGZMhgzS5Hm",
+          "name": "OpenAI account 5"
         }
       },
       "id": "embeddings",
@@ -332,8 +332,8 @@
         "options": {}
       },
       "position": [
-        -496,
-        928
+        -656,
+        944
       ],
       "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
       "typeVersion": 1
@@ -379,7 +379,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-09-19T06:02:50.719Z",
-  "versionCounter": 42,
-  "versionId": "18aa1274-7610-4ba2-b50e-15c2bca4ba2b"
+  "updatedAt": "2026-09-19T16:55:36.234Z",
+  "versionCounter": 50,
+  "versionId": "99f57597-ed97-4227-b423-76d7240b5487"
 }
