@@ -307,7 +307,7 @@
       "name": "📨 Telegram — confirmar al cliente",
       "parameters": {
         "additionalFields": {},
-        "chatId": "={{ $json.chat_id }}",
+        "chatId": "={{ $('📩 PASO 2 — Mensaje recibido (simulando Telegram)').item.json.chat_id }}",
         "operation": "sendMessage",
         "resource": "message",
         "text": "={{ $json.mensaje_telegram }}"
@@ -423,7 +423,7 @@
       "name": "📨 Telegram — avisar demora",
       "parameters": {
         "additionalFields": {},
-        "chatId": "={{ $json.chat_id }}",
+        "chatId": "={{ $('📩 PASO 2 — Mensaje recibido (simulando Telegram)').item.json.chat_id }}",
         "operation": "sendMessage",
         "resource": "message",
         "text": "={{ $json.mensaje_telegram }}"
@@ -551,7 +551,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-09-26T02:07:26.081Z",
-  "versionCounter": 6,
-  "versionId": "e1777579-a3d2-4153-b45c-8121df7215f5"
+  "updatedAt": "2026-09-26T02:12:48.655Z",
+  "versionCounter": 8,
+  "versionId": "fb8d9206-4d42-42e4-a888-850de58a9db7"
 }

@@ -501,7 +501,7 @@
       "name": "📨 Telegram — pedir aclaración",
       "parameters": {
         "additionalFields": {},
-        "chatId": "={{ $json.chat_id }}",
+        "chatId": "={{ $('📩 PASO 2 — Solicitud recibida (simulando Telegram)').item.json.chat_id }}",
         "text": "={{ $json.mensaje_telegram }}"
       },
       "position": [
@@ -570,7 +570,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-09-26T02:07:26.690Z",
-  "versionCounter": 10,
-  "versionId": "515f898d-203b-4107-b9bd-c7ff35caf29d"
+  "updatedAt": "2026-09-26T02:12:49.277Z",
+  "versionCounter": 11,
+  "versionId": "5373fd75-b38e-4a62-a974-d4bec05c759d"
 }
