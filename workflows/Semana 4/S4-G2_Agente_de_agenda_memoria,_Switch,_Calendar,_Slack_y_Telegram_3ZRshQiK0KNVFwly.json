@@ -192,6 +192,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "position": [
@@ -227,6 +228,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "position": [
@@ -481,6 +483,7 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "position": [
@@ -570,7 +573,7 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-09-26T02:27:49.677Z",
-  "versionCounter": 12,
-  "versionId": "3961718a-5db8-4962-814a-ec18cea31a2a"
+  "updatedAt": "2026-09-26T02:34:46.512Z",
+  "versionCounter": 14,
+  "versionId": "74052212-855a-403c-aa66-10f68347917c"
 }
