@@ -3,7 +3,7 @@
 Backup versionado de los workflows de n8n usados en el curso/talleres de Educación Ejecutiva. Los workflows se exportan vía la API pública de n8n y se guardan como JSON en este repo, organizados por semana.
 
 ## Estructura
-
+hola
 ```
 config.yaml       # credenciales locales (URL + API key) — NO se sube a git
 export.sh          # script de exportación y backup
